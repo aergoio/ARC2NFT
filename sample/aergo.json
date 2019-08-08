@@ -1,0 +1,6 @@
+{
+  "name" : "aergo-contract-ex/simplenft",
+  "source" : "simpleNFT.lua",
+  "target" : "out.lua",
+  "tests": []
+}

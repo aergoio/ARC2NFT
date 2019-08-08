@@ -1,0 +1,6 @@
+{
+  "name" : "aergoio/ARC2NFT",
+  "source" : "src/ANFT.lua",
+  "target" : "target/out.lua",
+  "tests": []
+}

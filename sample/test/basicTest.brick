@@ -1,0 +1,8 @@
+reset
+
+# owner: AmgXAhYMSwQKo2Cgm5AaErEQBBPW66vnFagMd2fn7nry92TfMZuG
+# simpleNFT: AmhPm1dUGiTzpFkfsccH6csgQvYexKooe4Spg8u15nfMFDbrsXfx
+
+deploy owner 0 simpleNFT ./out.lua
+
+query simpleNFT balanceOf `["AmgXAhYMSwQKo2Cgm5AaErEQBBPW66vnFagMd2fn7nry92TfMZuG"]` {"_bignum":"0"}
