@@ -130,7 +130,7 @@ end
 -- @param   operator    (address) allowed address
 -- @return  (bool) true/false
 function isApprovedForAll(owner, operator) 
-  return _operatorApprovals[owner .."/"..operator]
+  return _operatorApprovals[owner .."/"..operator] or false
 end
 
 -- Allow operator to use all sender's token
@@ -169,9 +169,10 @@ function constructor()
     _init("simpleNFT", "SYMNFT")    
 end
 
-function mint(tokenId)
-    -- check existance
-    _mint(system.getCreator(), tokenId)
+function mint(to, tokenId, ...)
+  assert(system.getSender() == system.getCreator(), "only contract owner can mint")
+  -- check existance
+  _mint(to, tokenId, ...)
 end
 
 function burn(tokenId)

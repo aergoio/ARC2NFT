@@ -1,0 +1,50 @@
+reset
+
+# owner: AmgXAhYMSwQKo2Cgm5AaErEQBBPW66vnFagMd2fn7nry92TfMZuG
+# user1: Amg25cfD4ibjmjPYbtWnMKocrF147gJJxKy5uuFymEBNF2YiPwzr
+# simpleNFT: AmhPm1dUGiTzpFkfsccH6csgQvYexKooe4Spg8u15nfMFDbrsXfx
+# operator: Amfzhv6pzRBm4U4p7evxiAYaz5VWghAYnDb8MfFuH4XWeZ9pGy4a
+
+# NFTReceiver: Amh9dcn4H2sGt3mJVjUrwcsbNw2BkbXg9BipHwY8c5bqDM2cEj5r
+# nonNFTReceiver: AmhE1DqvehPsB1KKDHsV5BsyhPotux6Smm2hDsUBC4LQdpG9184e
+
+deploy owner 0 simpleNFT ../out.lua
+
+query simpleNFT balanceOf `["AmgXAhYMSwQKo2Cgm5AaErEQBBPW66vnFagMd2fn7nry92TfMZuG"]` {"_bignum":"0"}
+query simpleNFT balanceOf `["Amg25cfD4ibjmjPYbtWnMKocrF147gJJxKy5uuFymEBNF2YiPwzr"]` {"_bignum":"0"}
+
+deploy owner 0 NFTReceiver ../../receiver/sampleNFTReceiver.lua `["AmhPm1dUGiTzpFkfsccH6csgQvYexKooe4Spg8u15nfMFDbrsXfx"]`
+deploy owner 0 nonNFTReceiver ../../receiver/nonNFTReceiver.lua
+
+# ================================
+# mint
+# ================================
+# mint 3 new tokens (1000, 2000, 3000) to owner
+call owner 0 simpleNFT mint `["AmgXAhYMSwQKo2Cgm5AaErEQBBPW66vnFagMd2fn7nry92TfMZuG", {"_bignum":"1000"}]`
+query simpleNFT balanceOf `["AmgXAhYMSwQKo2Cgm5AaErEQBBPW66vnFagMd2fn7nry92TfMZuG"]` {"_bignum":"1"}
+query simpleNFT ownerOf `[{"_bignum":"1000"}]` `"AmgXAhYMSwQKo2Cgm5AaErEQBBPW66vnFagMd2fn7nry92TfMZuG"`
+
+call owner 0 simpleNFT mint `["AmgXAhYMSwQKo2Cgm5AaErEQBBPW66vnFagMd2fn7nry92TfMZuG", {"_bignum":"2000"}]`
+query simpleNFT balanceOf `["AmgXAhYMSwQKo2Cgm5AaErEQBBPW66vnFagMd2fn7nry92TfMZuG"]` {"_bignum":"2"}
+query simpleNFT ownerOf `[{"_bignum":"2000"}]` `"AmgXAhYMSwQKo2Cgm5AaErEQBBPW66vnFagMd2fn7nry92TfMZuG"`
+
+call owner 0 simpleNFT mint `["AmgXAhYMSwQKo2Cgm5AaErEQBBPW66vnFagMd2fn7nry92TfMZuG", {"_bignum":"3000"}]`
+query simpleNFT balanceOf `["AmgXAhYMSwQKo2Cgm5AaErEQBBPW66vnFagMd2fn7nry92TfMZuG"]` {"_bignum":"3"}
+query simpleNFT ownerOf `[{"_bignum":"3000"}]` `"AmgXAhYMSwQKo2Cgm5AaErEQBBPW66vnFagMd2fn7nry92TfMZuG"`
+
+# user1 must have nothing
+query simpleNFT balanceOf `["Amg25cfD4ibjmjPYbtWnMKocrF147gJJxKy5uuFymEBNF2YiPwzr"]` {"_bignum":"0"}
+
+# mint 2 new tokens (11000, 12000) to contract, NFTReceiver
+call owner 0 simpleNFT mint `["Amh9dcn4H2sGt3mJVjUrwcsbNw2BkbXg9BipHwY8c5bqDM2cEj5r", {"_bignum":"11000"}, true]`
+query simpleNFT balanceOf `["Amh9dcn4H2sGt3mJVjUrwcsbNw2BkbXg9BipHwY8c5bqDM2cEj5r"]` {"_bignum":"1"}
+query simpleNFT ownerOf `[{"_bignum":"11000"}]` `"Amh9dcn4H2sGt3mJVjUrwcsbNw2BkbXg9BipHwY8c5bqDM2cEj5r"`
+
+call owner 0 simpleNFT mint `["Amh9dcn4H2sGt3mJVjUrwcsbNw2BkbXg9BipHwY8c5bqDM2cEj5r", {"_bignum":"12000"}, true]`
+query simpleNFT balanceOf `["Amh9dcn4H2sGt3mJVjUrwcsbNw2BkbXg9BipHwY8c5bqDM2cEj5r"]` {"_bignum":"2"}
+query simpleNFT ownerOf `[{"_bignum":"12000"}]` `"Amh9dcn4H2sGt3mJVjUrwcsbNw2BkbXg9BipHwY8c5bqDM2cEj5r"`
+
+# Error cases
+call owner 0 simpleNFT mint `["AmgXAhYMSwQKo2Cgm5AaErEQBBPW66vnFagMd2fn7nry92TfMZuG", {"_bignum":"3000"}]` `token is already minted`
+call owner 0 simpleNFT mint `["AmgXAhYMSwQKo2Cgm5AaErEQBBPW66vnFagMd2fn7nry92TfMZuG", {"_bignum":"-4000"}]` `must be positive number`
+call owner 0 simpleNFT mint `["AmgXAhYMSwQKo2Cgm5AaErEQBBPW66vnFagMd2fn7nry92TfMZuG", 123]` `invalid type`

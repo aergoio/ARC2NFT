@@ -130,7 +130,7 @@ end
 -- @param   operator    (address) allowed address
 -- @return  (bool) true/false
 function isApprovedForAll(owner, operator) 
-  return _operatorApprovals[owner .."/"..operator]
+  return _operatorApprovals[owner .."/"..operator] or false
 end
 
 -- Allow operator to use all sender's token

@@ -1,0 +1,18 @@
+batch initAndMint.brick
+
+# ================================
+# burn
+# ================================
+# owner burns his tokens (1000, 2000)
+call owner 0 simpleNFT burn `[{"_bignum":"1000"}]`
+query simpleNFT balanceOf `["AmgXAhYMSwQKo2Cgm5AaErEQBBPW66vnFagMd2fn7nry92TfMZuG"]` {"_bignum":"2"}
+call owner 0 simpleNFT burn `[{"_bignum":"2000"}]`
+query simpleNFT balanceOf `["AmgXAhYMSwQKo2Cgm5AaErEQBBPW66vnFagMd2fn7nry92TfMZuG"]` {"_bignum":"1"}
+
+# Error cases
+# try to burn non-existing id
+call owner 0 simpleNFT burn `[{"_bignum":"9999"}]` `token is not exist`
+# try to burn others
+call user1 0 simpleNFT burn `[{"_bignum":"3000"}]` `invalid owner`
+# The burned item cannot be minted again
+call owner 0 simpleNFT mint `["AmgXAhYMSwQKo2Cgm5AaErEQBBPW66vnFagMd2fn7nry92TfMZuG", {"_bignum":"1000"}]` `token is already minted`

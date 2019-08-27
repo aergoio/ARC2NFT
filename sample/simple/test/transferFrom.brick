@@ -1,0 +1,27 @@
+batch initAndMint.brick
+
+# ================================
+# transferFrom by normal account
+# ================================
+# owner approves user1
+call owner 0 simpleNFT setApprovalForAll `["Amg25cfD4ibjmjPYbtWnMKocrF147gJJxKy5uuFymEBNF2YiPwzr", true]`
+# user1 transfers owner's token 1000
+call user1 0 simpleNFT transferFrom `["AmgXAhYMSwQKo2Cgm5AaErEQBBPW66vnFagMd2fn7nry92TfMZuG", "Amg25cfD4ibjmjPYbtWnMKocrF147gJJxKy5uuFymEBNF2YiPwzr", {"_bignum":"1000"}]`
+
+# owner cancels approval of user1
+call owner 0 simpleNFT setApprovalForAll `["Amg25cfD4ibjmjPYbtWnMKocrF147gJJxKy5uuFymEBNF2YiPwzr", false]`
+# user1 tries to transfer owner's token, but fail
+call user1 0 simpleNFT transferFrom `["AmgXAhYMSwQKo2Cgm5AaErEQBBPW66vnFagMd2fn7nry92TfMZuG", "Amg25cfD4ibjmjPYbtWnMKocrF147gJJxKy5uuFymEBNF2YiPwzr", {"_bignum":"3000"}]` `caller is not approved for holder`
+
+# ================================
+# transferFrom by contract
+# ================================
+# owner approves NFTReceiver
+call owner 0 simpleNFT setApprovalForAll `["Amh9dcn4H2sGt3mJVjUrwcsbNw2BkbXg9BipHwY8c5bqDM2cEj5r", true]`
+# burn owner's token from contract
+call owner 0 NFTReceiver contractTransferFrom `["Amh9dcn4H2sGt3mJVjUrwcsbNw2BkbXg9BipHwY8c5bqDM2cEj5r", {"_bignum":"2000"}, true]`
+
+# owner cancels approval of NFTReceiver
+call owner 0 simpleNFT setApprovalForAll `["Amh9dcn4H2sGt3mJVjUrwcsbNw2BkbXg9BipHwY8c5bqDM2cEj5r", false]`
+# try to burn owner's token, but fail
+call owner 0 NFTReceiver contractTransferFrom `["Amh9dcn4H2sGt3mJVjUrwcsbNw2BkbXg9BipHwY8c5bqDM2cEj5r", {"_bignum":"3000"}, true]` `caller is not approved for holder`

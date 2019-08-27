@@ -1,0 +1,41 @@
+batch initAndMint.brick
+
+# ================================
+# transfer
+# ================================
+# move token 1000 from owner to user1
+call owner 0 simpleNFT transfer `["Amg25cfD4ibjmjPYbtWnMKocrF147gJJxKy5uuFymEBNF2YiPwzr", {"_bignum":"1000"}]`
+# token 1000's ownership move from owner to user1
+query simpleNFT ownerOf `[{"_bignum":"1000"}]` `"Amg25cfD4ibjmjPYbtWnMKocrF147gJJxKy5uuFymEBNF2YiPwzr"`
+
+# move token 2000 from owner to user1
+call owner 0 simpleNFT transfer `["Amg25cfD4ibjmjPYbtWnMKocrF147gJJxKy5uuFymEBNF2YiPwzr", {"_bignum":"2000"}]`
+query simpleNFT ownerOf `[{"_bignum":"2000"}]` `"Amg25cfD4ibjmjPYbtWnMKocrF147gJJxKy5uuFymEBNF2YiPwzr"`
+
+# move token 1000 from user1 to owner
+call user1 0 simpleNFT transfer `["AmgXAhYMSwQKo2Cgm5AaErEQBBPW66vnFagMd2fn7nry92TfMZuG", {"_bignum":"1000"}]`
+query simpleNFT ownerOf `[{"_bignum":"1000"}]` `"AmgXAhYMSwQKo2Cgm5AaErEQBBPW66vnFagMd2fn7nry92TfMZuG"`
+
+# Error cases
+call user1 0 simpleNFT transfer `["AmgXAhYMSwQKo2Cgm5AaErEQBBPW66vnFagMd2fn7nry92TfMZuG", {"_bignum":"3000"}]` `invalid owner`
+call user1 0 simpleNFT transfer `["AmgXAhYMSwQKo2Cgm5AaErEQBBPW66vnFagMd2fn7nry92TfMZuG", {"_bignum":"99999"}]` `token is not exist`
+call user1 0 simpleNFT transfer `["AmgXAhYMSwQKo2Cgm5AaErEQBBPW66vnFagMd2fn7nry92TfMZuG", 1000]` `invalid type`
+
+# ================================ 
+# transfer to/from contract
+# ================================
+# transfer token 11000 from NFTReceiver to user1
+call user1 0 NFTReceiver withdraw `["Amg25cfD4ibjmjPYbtWnMKocrF147gJJxKy5uuFymEBNF2YiPwzr", {"_bignum":"11000"}]`
+query simpleNFT ownerOf `[{"_bignum":"11000"}]` `"Amg25cfD4ibjmjPYbtWnMKocrF147gJJxKy5uuFymEBNF2YiPwzr"`
+# transfer token 11000 from user1 to NFTReceiver
+call user1 0 simpleNFT transfer `["Amh9dcn4H2sGt3mJVjUrwcsbNw2BkbXg9BipHwY8c5bqDM2cEj5r", {"_bignum":"11000"}, true]`
+query simpleNFT ownerOf `[{"_bignum":"12000"}]` `"Amh9dcn4H2sGt3mJVjUrwcsbNw2BkbXg9BipHwY8c5bqDM2cEj5r"`
+
+query simpleNFT balanceOf `["Amh9dcn4H2sGt3mJVjUrwcsbNw2BkbXg9BipHwY8c5bqDM2cEj5r"]` {"_bignum":"2"}
+
+# Error cases
+# Transfer to non nft receiver
+call user1 0 NFTReceiver withdraw `["AmhE1DqvehPsB1KKDHsV5BsyhPotux6Smm2hDsUBC4LQdpG9184e", {"_bignum":"11000"}]` `not found function: onARC2Received`
+# Rollback when there is a failure at the receiving contract
+call owner 0 simpleNFT transfer `["Amh9dcn4H2sGt3mJVjUrwcsbNw2BkbXg9BipHwY8c5bqDM2cEj5r", {"_bignum":"3000"}, false]` `contract is fail`
+query simpleNFT ownerOf `[{"_bignum":"3000"}]` `"AmgXAhYMSwQKo2Cgm5AaErEQBBPW66vnFagMd2fn7nry92TfMZuG"`

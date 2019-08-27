@@ -4,9 +4,10 @@ function constructor()
     _init("simpleNFT", "SYMNFT")    
 end
 
-function mint(tokenId)
+function mint(to, tokenId, ...)
+    assert(system.getSender() == system.getCreator(), "only contract owner can mint")
     -- check existance
-    _mint(system.getCreator(), tokenId)
+    _mint(to, tokenId, ...)
 end
 
 function burn(tokenId)

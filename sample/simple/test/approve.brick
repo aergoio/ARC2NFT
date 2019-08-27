@@ -1,0 +1,13 @@
+batch initAndMint.brick
+
+# ================================
+# approve
+# ================================
+# owner approves operator 
+query simpleNFT isApprovedForAll `["AmgXAhYMSwQKo2Cgm5AaErEQBBPW66vnFagMd2fn7nry92TfMZuG", "Amfzhv6pzRBm4U4p7evxiAYaz5VWghAYnDb8MfFuH4XWeZ9pGy4a"]` `false`
+call owner 0 simpleNFT setApprovalForAll `["Amfzhv6pzRBm4U4p7evxiAYaz5VWghAYnDb8MfFuH4XWeZ9pGy4a", true]`
+query simpleNFT isApprovedForAll `["AmgXAhYMSwQKo2Cgm5AaErEQBBPW66vnFagMd2fn7nry92TfMZuG", "Amfzhv6pzRBm4U4p7evxiAYaz5VWghAYnDb8MfFuH4XWeZ9pGy4a"]` `true`
+
+# owner cancels approval of operator
+call owner 0 simpleNFT setApprovalForAll `["Amfzhv6pzRBm4U4p7evxiAYaz5VWghAYnDb8MfFuH4XWeZ9pGy4a", false]`
+query simpleNFT isApprovedForAll `["AmgXAhYMSwQKo2Cgm5AaErEQBBPW66vnFagMd2fn7nry92TfMZuG", "Amfzhv6pzRBm4U4p7evxiAYaz5VWghAYnDb8MfFuH4XWeZ9pGy4a"]` `false`
