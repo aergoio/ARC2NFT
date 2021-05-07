@@ -121,8 +121,8 @@ end
 
 -- Find the owner of an NFT
 -- @type    query
--- @param   tokenId (ubig) the NFT id
--- @return  (ubig) the address of the owner of the NFT
+-- @param   tokenId (str128) the NFT id
+-- @return  (address) the address of the owner of the NFT
 function ownerOf(tokenId) 
   owner = _owners[tokenId] or address0;
   assert(owner ~= address0, "ARC2: ownerOf - query for nonexistent token")
@@ -135,7 +135,7 @@ end
 -- @type    call
 -- @param   from    (address) a sender's address
 -- @param   to      (address) a receiver's address
--- @param   tokenId (ubig) the NFT token to send
+-- @param   tokenId (str128) the NFT token to send
 -- @param   ...     (Optional) addtional data, MUST be sent unaltered in call to 'onARC2Received' on 'to'
 -- @event   transfer(from, to, value)
 function safeTransferFrom(from, to, tokenId, ...) 
@@ -166,8 +166,8 @@ end
 
 -- Change or reaffirm the approved address for an NFT
 -- @type    call
--- @param   to    (address) the new approved NFT controller
--- @param   tokenId     (ubig) the NFT token to approve
+-- @param   to          (address) the new approved NFT controller
+-- @param   tokenId     (str128) the NFT token to approve
 -- @event   approve(owner, to, tokenId)
 function approve(to, tokenId)
   _typecheck(to, 'address')
@@ -183,7 +183,7 @@ end
 
 -- Get the approved address for a single NFT
 -- @type    query
--- @param   tokenId  (ubig) the NFT token to find the approved address for
+-- @param   tokenId  (str128) the NFT token to find the approved address for
 -- @return  (address) the approved address for this NFT, or the zero address if there is none
 function getApproved(tokenId) 
   _typecheck(tokenId, 'str128')
