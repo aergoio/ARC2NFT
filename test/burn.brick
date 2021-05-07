@@ -1,0 +1,23 @@
+# load init file
+batch ./init.brick
+
+# check contractOwner's balance
+query tokenCtr balanceOf `["Amga6g1TiZxcmcZPYuL3b4mrkB4o25wwahmrn6H3d5M8jXshdMik"]` `{"_bignum":"5"}`
+
+# ===== BURN TEST ======
+# mint NFT to the user 1 
+call contractOwner 0 tokenCtr burn `["NFT001"]`
+query tokenCtr balanceOf `["Amga6g1TiZxcmcZPYuL3b4mrkB4o25wwahmrn6H3d5M8jXshdMik"]` `{"_bignum":"4"}`
+query tokenCtr ownerOf `["NFT001"]` `` `query for nonexistent token`
+
+# mint the burnt NFT again
+call contractOwner 0 tokenCtr mint `["Amga6g1TiZxcmcZPYuL3b4mrkB4o25wwahmrn6H3d5M8jXshdMik", "NFT001"]`
+query tokenCtr balanceOf `["Amga6g1TiZxcmcZPYuL3b4mrkB4o25wwahmrn6H3d5M8jXshdMik"]` `{"_bignum":"5"}`
+query tokenCtr ownerOf `["NFT001"]` `"Amga6g1TiZxcmcZPYuL3b4mrkB4o25wwahmrn6H3d5M8jXshdMik"`
+
+# ===== ERROR CASE =====
+# burn nonexistent NFT
+call contractOwner 0 tokenCtr burn `["NONEXIST"]` `nonexisting token`
+
+# burn others
+call user1 0 tokenCtr burn `["NFT002"]` `caller is not owner nor approved`

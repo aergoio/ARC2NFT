@@ -1,0 +1,34 @@
+# load init file
+batch ./init.brick
+
+# ===== MINT TEST ======
+# mint NFT to the user 1 
+call contractOwner 0 tokenCtr mint `["Amg25cfD4ibjmjPYbtWnMKocrF147gJJxKy5uuFymEBNF2YiPwzr", "_test_item_000"]`
+query tokenCtr balanceOf `["Amg25cfD4ibjmjPYbtWnMKocrF147gJJxKy5uuFymEBNF2YiPwzr"]` `{"_bignum":"1"}`
+query tokenCtr ownerOf `["_test_item_000"]` `"Amg25cfD4ibjmjPYbtWnMKocrF147gJJxKy5uuFymEBNF2YiPwzr"`
+
+# mint 2nd NFT to the user 1
+call contractOwner 0 tokenCtr mint `["Amg25cfD4ibjmjPYbtWnMKocrF147gJJxKy5uuFymEBNF2YiPwzr", "_test_item_001"]`
+query tokenCtr balanceOf `["Amg25cfD4ibjmjPYbtWnMKocrF147gJJxKy5uuFymEBNF2YiPwzr"]` `{"_bignum":"2"}`
+query tokenCtr ownerOf `["_test_item_001"]` `"Amg25cfD4ibjmjPYbtWnMKocrF147gJJxKy5uuFymEBNF2YiPwzr"`
+
+# mint 3rd NFT to the user 2
+call contractOwner 0 tokenCtr mint `["Amgg1jWymSuHjNQQ1Z7DT91rDeRUqy7ac6VGAphDrtraeXmWtXLA", "_test_item_002"]`
+query tokenCtr balanceOf `["Amgg1jWymSuHjNQQ1Z7DT91rDeRUqy7ac6VGAphDrtraeXmWtXLA"]` `{"_bignum":"1"}`
+query tokenCtr ownerOf `["_test_item_002"]` `"Amgg1jWymSuHjNQQ1Z7DT91rDeRUqy7ac6VGAphDrtraeXmWtXLA"`
+
+# ===== ERROR CASE =====
+# type error - invalid address
+call contractOwner 0 tokenCtr mint `["INVALID_ADDRESS", "this_will_not_minted"]` `invalid address length`
+
+# type error - to long token id
+call contractOwner 0 tokenCtr mint `["Amgg1jWymSuHjNQQ1Z7DT91rDeRUqy7ac6VGAphDrtraeXmWtXLA", "1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890"]` `too long str128 length`
+
+# try to issue using duplicate id
+call contractOwner 0 tokenCtr mint `["Amgg1jWymSuHjNQQ1Z7DT91rDeRUqy7ac6VGAphDrtraeXmWtXLA", "_test_item_000"]` `already minted token`
+
+# try to mint from a general user
+call user1 0 tokenCtr mint `["INVALID_ADDRESS", "this_will_not_minted"]` `only contract creator can mint`
+
+# try to mint to a zero address
+call contractOwner 0 tokenCtr mint `["1111111111111111111111111111111111111111111111111111", "this_will_not_minted"]` `to the zero address`
