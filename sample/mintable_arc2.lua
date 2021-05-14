@@ -127,6 +127,28 @@ function symbol()
   return _symbol:get()
 end
 
+
+local function _baseURI()
+  -- TODO implement this
+  return "";
+end
+
+-- Get a token URI
+-- @type  query
+-- @param tokenId (str128) token id
+-- @return (string) URL for tokenId
+function tokenURI(tokenId)
+  assert(_exists(tokenId), "ARC2: tokenURI - nonexisting token")
+
+  baseURI = _baseURI()
+
+  if (baseURI ~= "") then
+    return baseURI .. tokenId
+  end
+
+  return "";
+end
+
 -- Count of all NFTs assigned to an owner
 -- @type    query
 -- @param   owner  (address) a target address
@@ -238,4 +260,4 @@ end
 
 
 abi.register(setApprovalForAll, safeTransferFrom, approve, mint, burn)
-abi.register_view(name, symbol, balanceOf, ownerOf, getApproved, isApprovedForAll) 
+abi.register_view(name, symbol, balanceOf, ownerOf, getApproved, isApprovedForAll, tokenURI)

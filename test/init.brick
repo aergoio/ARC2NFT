@@ -23,3 +23,5 @@ call contractOwner 0 tokenCtr mint `["Amga6g1TiZxcmcZPYuL3b4mrkB4o25wwahmrn6H3d5
 call contractOwner 0 tokenCtr mint `["Amga6g1TiZxcmcZPYuL3b4mrkB4o25wwahmrn6H3d5M8jXshdMik", "NFT003"]`
 call contractOwner 0 tokenCtr mint `["Amga6g1TiZxcmcZPYuL3b4mrkB4o25wwahmrn6H3d5M8jXshdMik", "NFT004"]`
 call contractOwner 0 tokenCtr mint `["Amga6g1TiZxcmcZPYuL3b4mrkB4o25wwahmrn6H3d5M8jXshdMik", "NFT005"]`
+
+query tokenCtr tokenURI `["NFT001"]` `""`
