@@ -1,0 +1,35 @@
+# load init file
+batch ./init.brick
+
+# ===== APPROVE TEST ======
+# must fail before contractOwner approve user1
+call user1 0 tokenCtr safeTransferFrom `["Amga6g1TiZxcmcZPYuL3b4mrkB4o25wwahmrn6H3d5M8jXshdMik", "Amg25cfD4ibjmjPYbtWnMKocrF147gJJxKy5uuFymEBNF2YiPwzr", "NFT001"]` `caller is not owner nor approved`
+
+# approve NFT001 to user1
+query tokenCtr getApproved  `["NFT001"]` `"1111111111111111111111111111111111111111111111111111"`
+call contractOwner 0 tokenCtr approve `["Amg25cfD4ibjmjPYbtWnMKocrF147gJJxKy5uuFymEBNF2YiPwzr", "NFT001"]`
+query tokenCtr getApproved  `["NFT001"]` `"Amg25cfD4ibjmjPYbtWnMKocrF147gJJxKy5uuFymEBNF2YiPwzr"`
+
+# success to transfer
+call user1 0 tokenCtr safeTransferFrom `["Amga6g1TiZxcmcZPYuL3b4mrkB4o25wwahmrn6H3d5M8jXshdMik", "Amg25cfD4ibjmjPYbtWnMKocrF147gJJxKy5uuFymEBNF2YiPwzr", "NFT001"]`
+# check approvement reset 
+query tokenCtr getApproved  `["NFT001"]` `"1111111111111111111111111111111111111111111111111111"`
+
+
+# ===== APPROVEF FOR ALL TEST ======
+# must fail before contractOwner approveForAll user1
+call user1 0 tokenCtr safeTransferFrom `["Amga6g1TiZxcmcZPYuL3b4mrkB4o25wwahmrn6H3d5M8jXshdMik", "Amg25cfD4ibjmjPYbtWnMKocrF147gJJxKy5uuFymEBNF2YiPwzr", "NFT002"]` `caller is not owner nor approved`
+
+# approveForAll to user1
+query tokenCtr isApprovedForAll `["Amga6g1TiZxcmcZPYuL3b4mrkB4o25wwahmrn6H3d5M8jXshdMik", "Amg25cfD4ibjmjPYbtWnMKocrF147gJJxKy5uuFymEBNF2YiPwzr"]` `false`
+call contractOwner 0 tokenCtr setApprovalForAll `["Amg25cfD4ibjmjPYbtWnMKocrF147gJJxKy5uuFymEBNF2YiPwzr", true]`
+query tokenCtr isApprovedForAll `["Amga6g1TiZxcmcZPYuL3b4mrkB4o25wwahmrn6H3d5M8jXshdMik", "Amg25cfD4ibjmjPYbtWnMKocrF147gJJxKy5uuFymEBNF2YiPwzr"]` `true`
+
+# success to transfer
+call user1 0 tokenCtr safeTransferFrom `["Amga6g1TiZxcmcZPYuL3b4mrkB4o25wwahmrn6H3d5M8jXshdMik", "Amg25cfD4ibjmjPYbtWnMKocrF147gJJxKy5uuFymEBNF2YiPwzr", "NFT002"]`
+call user1 0 tokenCtr safeTransferFrom `["Amga6g1TiZxcmcZPYuL3b4mrkB4o25wwahmrn6H3d5M8jXshdMik", "Amg25cfD4ibjmjPYbtWnMKocrF147gJJxKy5uuFymEBNF2YiPwzr", "NFT003"]`
+
+# disable approve
+call contractOwner 0 tokenCtr setApprovalForAll `["Amg25cfD4ibjmjPYbtWnMKocrF147gJJxKy5uuFymEBNF2YiPwzr", false]`
+# transfer must be failed
+call user1 0 tokenCtr safeTransferFrom `["Amga6g1TiZxcmcZPYuL3b4mrkB4o25wwahmrn6H3d5M8jXshdMik", "Amg25cfD4ibjmjPYbtWnMKocrF147gJJxKy5uuFymEBNF2YiPwzr", "NFT004"]` `caller is not owner nor approved`

@@ -1,0 +1,22 @@
+# load init file
+batch ./init.brick
+
+# ===== TRANSFER TEST ======
+# transfer NFT001 from contractOwner to user1
+query tokenCtr ownerOf `["NFT001"]` `"Amga6g1TiZxcmcZPYuL3b4mrkB4o25wwahmrn6H3d5M8jXshdMik"`
+call contractOwner 0 tokenCtr safeTransferFrom `["Amga6g1TiZxcmcZPYuL3b4mrkB4o25wwahmrn6H3d5M8jXshdMik", "Amg25cfD4ibjmjPYbtWnMKocrF147gJJxKy5uuFymEBNF2YiPwzr", "NFT001"]`
+query tokenCtr ownerOf `["NFT001"]` `"Amg25cfD4ibjmjPYbtWnMKocrF147gJJxKy5uuFymEBNF2YiPwzr"`
+
+# transfer back
+call user1 0 tokenCtr safeTransferFrom `["Amg25cfD4ibjmjPYbtWnMKocrF147gJJxKy5uuFymEBNF2YiPwzr", "Amga6g1TiZxcmcZPYuL3b4mrkB4o25wwahmrn6H3d5M8jXshdMik", "NFT001"]`
+query tokenCtr ownerOf `["NFT001"]` `"Amga6g1TiZxcmcZPYuL3b4mrkB4o25wwahmrn6H3d5M8jXshdMik"`
+
+# ===== ERROR CASE =====
+# not owner
+call user1 0 tokenCtr safeTransferFrom `["Amga6g1TiZxcmcZPYuL3b4mrkB4o25wwahmrn6H3d5M8jXshdMik", "Amg25cfD4ibjmjPYbtWnMKocrF147gJJxKy5uuFymEBNF2YiPwzr", "NFT002"]` `caller is not owner nor approve`
+# non existing token
+call contractOwner 0 tokenCtr safeTransferFrom `["Amga6g1TiZxcmcZPYuL3b4mrkB4o25wwahmrn6H3d5M8jXshdMik", "Amg25cfD4ibjmjPYbtWnMKocrF147gJJxKy5uuFymEBNF2YiPwzr", "NONEXISTING"]` `nonexisting token`
+# to zero address
+call contractOwner 0 tokenCtr safeTransferFrom `["Amga6g1TiZxcmcZPYuL3b4mrkB4o25wwahmrn6H3d5M8jXshdMik", "1111111111111111111111111111111111111111111111111111", "NFT002"]` `transfer to the zero address`
+# invalid from address: user2
+call contractOwner 0 tokenCtr safeTransferFrom `["Amgg1jWymSuHjNQQ1Z7DT91rDeRUqy7ac6VGAphDrtraeXmWtXLA", "Amg25cfD4ibjmjPYbtWnMKocrF147gJJxKy5uuFymEBNF2YiPwzr", "NFT003"]` `transfer of token that is not own`

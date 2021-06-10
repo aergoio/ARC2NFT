@@ -9,8 +9,9 @@ This defines interface and behaviors for aergo non fungible token contract.
 ### Token
 
 Following is an interface contract declaring the required functions to meet the ARC-2 standard.
-Issuers can add functions like name(), symbol(), and burn() as needed.
+Issuers can add functions like name(), symbol(), mint() and burn() as needed.
 
+(NOTE) The token id is a string of up to 128 lengths.
 
 ``` lua
 -- Count of all NFTs assigned to an owner
@@ -21,17 +22,38 @@ function balanceOf(owner) end
 
 -- Find the owner of an NFT
 -- @type    query
--- @param   tokenId (ubig) the NFT id
--- @return (ubig) the address of the owner of the NFT
+-- @param   tokenId (str128) the NFT id
+-- @return (address) the address of the owner of the NFT
 function ownerOf(tokenId) end
 
--- Transfer sender's token to target 'to'
+-- Transfer a token of 'from' to 'to'
 -- @type    call
--- @param   to      (address) a target address
--- @param   tokenId (ubig) the NFT token to send
--- @param   ...     addtional data, MUST be sent unaltered in call to 'tokensReceived' on 'to'
+-- @param   from    (address) a sender's address
+-- @param   to      (address) a receiver's address
+-- @param   tokenId (str128) the NFT token to send
+-- @param   ...     (Optional) addtional data, MUST be sent unaltered in call to 'onARC2Received' on 'to'
 -- @event   transfer(from, to, value)
-function transfer(to, tokenId, ...) end
+function safeTransferFrom(from, to, tokenId, ...) end
+
+-- Change or reaffirm the approved address for an NFT
+-- @type    call
+-- @param   to          (address) the new approved NFT controller
+-- @param   tokenId     (str128) the NFT token to approve
+-- @event   approve(owner, to, tokenId)
+function approve(to, tokenId) end
+
+-- Get the approved address for a single NFT
+-- @type    query
+-- @param   tokenId  (str128) the NFT token to find the approved address for
+-- @return  (address) the approved address for this NFT, or the zero address if there is none
+function getApproved(tokenId) end
+
+-- Allow operator to control all sender's token
+-- @type    call
+-- @param   operator  (address) a operator's address
+-- @param   approved  (boolean) true if the operator is approved, false to revoke approval
+-- @event   approvalForAll(owner, operator, approved)
+function setApprovalForAll(operator, approved) end
 
 -- Get allowance from owner to spender
 -- @type    query
@@ -40,57 +62,16 @@ function transfer(to, tokenId, ...) end
 -- @return  (bool) true/false
 function isApprovedForAll(owner, operator) end
 
--- Allow operator to use all sender's token
--- @type    call
--- @param   operator  (address) a operator's address
--- @param   approved  (boolean) true/false
--- @event   approve(owner, operator, approved)
-function setApprovalForAll(operator, approved) end
-
--- Transfer 'from's token to target 'to'.
--- Tx sender have to be approved to spend from 'from'
--- @type    call
--- @param   from    (address) a sender's address
--- @param   to      (address) a receiver's address
--- @param   tokenId   (ubig) an amount of token to send
--- @param   ...     addtional data, MUST be sent unaltered in call to 'tokensReceived' on 'to'
--- @event   transfer(from, to, value)
-function transferFrom(from, to, tokenId, ...) end
-
 ```
 
-Enumerable extension
+Metadata extension
 
 ``` lua
 function name() end
 
 function symbol() end
-
-function tokenURI(tokenId) end
 ```
 
-Enumerable extension
-
-``` lua
--- Get a total number of NFT tokens tracked by this contract
--- @type    query
--- @return  (ubig) total supply of valid NFT tokens by this contract
-function totalSupply() end
-
--- Enumerate valid NFTs
--- @type    query
--- @param   index   A counter less than 'totalSupply()'
--- @return  (ubig) The token id for the 'index'th NFT (sort order not specified)
-function tokenByIndex(index) end
-
--- Enumerate NFTs assigned to an owner
--- @type    query
--- @param   owner   An address where we are interested
--- @param   index   A counter less than 'balanceOf(owner)'
--- @return  (ubig) The token id for the 'index'th NFT assigned to owner (sort order not specified)
-function tokenOfOwnerByIndex(owner, index) end
-
-```
 
 ### Hook
 

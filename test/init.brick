@@ -1,0 +1,27 @@
+reset
+
+# create test accounts
+# contractOwner = Amga6g1TiZxcmcZPYuL3b4mrkB4o25wwahmrn6H3d5M8jXshdMik
+inject contractOwner 10000000000000000
+
+# user1 = Amg25cfD4ibjmjPYbtWnMKocrF147gJJxKy5uuFymEBNF2YiPwzr
+inject user1 10000000000000000
+
+# user2 = Amgg1jWymSuHjNQQ1Z7DT91rDeRUqy7ac6VGAphDrtraeXmWtXLA
+inject user2 10000000000000000
+
+# initialize contract
+# deploy token contract
+deploy contractOwner 0 tokenCtr ../sample/mintable_arc2.lua
+
+query tokenCtr name  `[]` `"test_nft"`
+query tokenCtr symbol  `[]` `"TNFT"`
+
+# mint initial tokens to the contractOwner
+call contractOwner 0 tokenCtr mint `["Amga6g1TiZxcmcZPYuL3b4mrkB4o25wwahmrn6H3d5M8jXshdMik", "NFT001"]`
+call contractOwner 0 tokenCtr mint `["Amga6g1TiZxcmcZPYuL3b4mrkB4o25wwahmrn6H3d5M8jXshdMik", "NFT002"]`
+call contractOwner 0 tokenCtr mint `["Amga6g1TiZxcmcZPYuL3b4mrkB4o25wwahmrn6H3d5M8jXshdMik", "NFT003"]`
+call contractOwner 0 tokenCtr mint `["Amga6g1TiZxcmcZPYuL3b4mrkB4o25wwahmrn6H3d5M8jXshdMik", "NFT004"]`
+call contractOwner 0 tokenCtr mint `["Amga6g1TiZxcmcZPYuL3b4mrkB4o25wwahmrn6H3d5M8jXshdMik", "NFT005"]`
+
+query tokenCtr tokenURI `["NFT001"]` `""`
