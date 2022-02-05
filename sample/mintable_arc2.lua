@@ -27,12 +27,13 @@ end
 address0 = '1111111111111111111111111111111111111111111111111111'
   
 state.var {
-    _name = state.value(), -- token name
-    _symbol = state.value(), -- token symbol
+    _name = state.value(),            -- string
+    _symbol = state.value(),          -- string
 
-    _owners = state.map(), -- unsigned_bignum -> address
-    _balances = state.map(), -- address -> unsigned_bignum
-    _tokenApprovals = state.map(), -- unsigned_bignum -> address
+    _owners = state.map(),            -- str128 -> address
+    _balances = state.map(),          -- address -> unsigned_bignum
+
+    _tokenApprovals = state.map(),    -- str128 -> address
     _operatorApprovals = state.map(), -- address/address -> bool
 }
 
@@ -47,7 +48,7 @@ end
 
 
 -- Approve `to` to operate on `tokenId`
--- Emits a approve event
+-- Emits an approve event
 local function _approve(to, tokenId) 
   _tokenApprovals[tokenId] = to
   contract.event("approve", ownerOf(tokenId), to, tokenId)
@@ -86,7 +87,7 @@ local function _burn(tokenId)
   owner = ownerOf(tokenId)
   
   -- Clear approvals from the previous owner
-  _approve(address0, tokenId);
+  _approve(address0, tokenId)
 
   _balances[owner] = _balances[owner] - 1
   _owners[tokenId] = nil
@@ -112,15 +113,14 @@ function burn(tokenId)
   _burn(tokenId)
 end
 
--- Get a token name
+-- Get the token name
 -- @type    query
 -- @return  (string) name of this token
 function name()
   return _name:get()
 end
 
-
--- Get a token symbol
+-- Get the token symbol
 -- @type    query
 -- @return  (string) symbol of this token
 function symbol()
@@ -130,7 +130,7 @@ end
 
 local function _baseURI()
   -- TODO implement this
-  return "";
+  return ""
 end
 
 -- Get a token URI
@@ -146,7 +146,7 @@ function tokenURI(tokenId)
     return baseURI .. tokenId
   end
 
-  return "";
+  return ""
 end
 
 -- Count of all NFTs assigned to an owner
@@ -164,7 +164,7 @@ end
 -- @param   tokenId (str128) the NFT id
 -- @return  (address) the address of the owner of the NFT
 function ownerOf(tokenId) 
-  owner = _owners[tokenId] or address0;
+  owner = _owners[tokenId] or address0
   assert(owner ~= address0, "ARC2: ownerOf - query for nonexistent token")
   return owner
 end
@@ -218,7 +218,7 @@ function approve(to, tokenId)
   assert(system.getSender() == owner or isApprovedForAll(owner, system.getSender()), 
     "ARC2: approve - caller is not owner nor approved for all")
 
-  _approve(to, tokenId);
+  _approve(to, tokenId)
 end
 
 -- Get the approved address for a single NFT
@@ -229,7 +229,7 @@ function getApproved(tokenId)
   _typecheck(tokenId, 'str128')
   assert(_exists(tokenId), "ARC2: getApproved - nonexisting token")
 
-  return _tokenApprovals[tokenId] or address0;
+  return _tokenApprovals[tokenId] or address0
 end
 
 
