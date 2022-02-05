@@ -103,7 +103,7 @@ local function _mint(to, tokenId)
   _balances[to] = (_balances[to] or bignum.number(0)) + 1
   _owners[tokenId] = to
 
-  contract.event("transfer", address0, to, tokenId)
+  contract.event("mint", to, tokenId)
 end
 
 
@@ -118,7 +118,7 @@ local function _burn(tokenId)
   _balances[owner] = _balances[owner] - 1
   _owners[tokenId] = nil
 
-  contract.event("transfer", owner, address0, tokenId)
+  contract.event("burn", owner, tokenId)
 end
 
 
