@@ -49,14 +49,13 @@ local function _init(name, symbol)
 end
 
 local function _callOnARC2Received(from, to, tokenId, ...)
-  if to ~= address0 and system.isContract(to) then
+  if system.isContract(to) then
     contract.call(to, "onARC2Received", system.getSender(), from, tokenId, ...)
   end
 end
 
 local function _exists(tokenId)
-  owner = _owners[tokenId] or address0
-  return owner ~= address0
+  return _owners[tokenId] ~= nil
 end
 
 -- Get the token name
@@ -78,7 +77,7 @@ end
 -- @param   owner  (address) a target address
 -- @return  (ubig) the number of NFT tokens of owner
 function balanceOf(owner)
-  assert(owner ~= address0, "ARC2: balanceOf - query for zero address")
+  --assert(owner ~= address0, "ARC2: balanceOf - query for zero address")
   return _balances[owner] or bignum.number(0)
 end
 
@@ -87,8 +86,8 @@ end
 -- @param   tokenId (str128) the NFT id
 -- @return  (address) the address of the owner of the NFT
 function ownerOf(tokenId)
-  owner = _owners[tokenId] or address0
-  assert(owner ~= address0, "ARC2: ownerOf - query for nonexistent token")
+  owner = _owners[tokenId]
+  assert(owner ~= nil, "ARC2: ownerOf - nonexistent token")
   return owner
 end
 
@@ -100,10 +99,10 @@ local function _mint(to, tokenId)
 
   assert(to ~= address0, "ARC2: mint - to the zero address")
   assert(not _exists(tokenId), "ARC2: mint - already minted token")
-  
+
   _balances[to] = (_balances[to] or bignum.number(0)) + 1
   _owners[tokenId] = to
-  
+
   contract.event("transfer", address0, to, tokenId)
 end
 
@@ -112,7 +111,7 @@ local function _burn(tokenId)
   _typecheck(tokenId, 'str128')
 
   owner = ownerOf(tokenId)
-  
+
   -- Clear approvals from the previous owner
   _approve(address0, tokenId)
 
@@ -188,12 +187,12 @@ end
 -- Get the approved address for a single NFT
 -- @type    query
 -- @param   tokenId  (str128) the NFT token to find the approved address for
--- @return  (address) the approved address for this NFT, or the zero address if there is none
+-- @return  (address) the approved address for this NFT, or nil
 function getApproved(tokenId) 
   _typecheck(tokenId, 'str128')
   assert(_exists(tokenId), "ARC2: getApproved - nonexisting token")
 
-  return _tokenApprovals[tokenId] or address0
+  return _tokenApprovals[tokenId]
 end
 
 
