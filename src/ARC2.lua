@@ -7,57 +7,45 @@
 -- @param x variable to check
 -- @param t (string) expected type
 local function _typecheck(x, t)
-    if (x and t == 'address') then
-      assert(type(x) == 'string', "address must be string type")
-      -- check address length
-      assert(52 == #x, string.format("invalid address length: %s (%s)", x, #x))
-      -- check character
-      local invalidChar = string.match(x, '[^123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]')
-      assert(nil == invalidChar, string.format("invalid address format: %s contains invalid char %s", x, invalidChar or 'nil'))
-    elseif (x and t == 'str128') then
-      assert(type(x) == 'string', "str128 must be string type")
-      -- check address length
-      assert(128 >= #x, string.format("too long str128 length: %s", #x))
-    else
-      -- check default lua types
-      assert(type(x) == t, string.format("invalid type: %s != %s", type(x), t or 'nil'))
-    end
+  if (x and t == 'address') then
+    assert(type(x) == 'string', "address must be string type")
+    -- check address length
+    assert(52 == #x, string.format("invalid address length: %s (%s)", x, #x))
+    -- check character
+    local invalidChar = string.match(x, '[^123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]')
+    assert(nil == invalidChar, string.format("invalid address format: %s contains invalid char %s", x, invalidChar or 'nil'))
+  elseif (x and t == 'str128') then
+    assert(type(x) == 'string', "str128 must be string type")
+    -- check address length
+    assert(128 >= #x, string.format("too long str128 length: %s", #x))
+  else
+    -- check default lua types
+    assert(type(x) == t, string.format("invalid type: %s != %s", type(x), t or 'nil'))
+  end
 end
 
 address0 = '1111111111111111111111111111111111111111111111111111'
+
   
 state.var {
-    _name = state.value(),            -- string
-    _symbol = state.value(),          -- string
+  _name = state.value(),            -- string
+  _symbol = state.value(),          -- string
 
-    _owners = state.map(),            -- str128 -> address
-    _balances = state.map(),          -- address -> unsigned_bignum
+  _owners = state.map(),            -- str128 -> address
+  _balances = state.map(),          -- address -> unsigned_bignum
 
-    _tokenApprovals = state.map(),    -- str128 -> address
-    _operatorApprovals = state.map(), -- address/address -> bool
+  _tokenApprovals = state.map(),    -- str128 -> address
+  _operatorApprovals = state.map(), -- address/address -> bool
 }
+
 
 -- call this at constructor
 local function _init(name, symbol)
-    _typecheck(name, 'string')
-    _typecheck(symbol, 'string')
+  _typecheck(name, 'string')
+  _typecheck(symbol, 'string')
   
-    _name:set(name)
-    _symbol:set(symbol)
-end
-
-
--- Approve `to` to operate on `tokenId`
--- Emits an approve event
-local function _approve(to, tokenId) 
-  _tokenApprovals[tokenId] = to
-  contract.event("approve", ownerOf(tokenId), to, tokenId)
-end
-
-
-local function _exists(tokenId) 
-  owner = _owners[tokenId] or address0
-  return owner ~= address0
+  _name:set(name)
+  _symbol:set(symbol)
 end
 
 local function _callOnARC2Received(from, to, tokenId, ...)
@@ -65,6 +53,45 @@ local function _callOnARC2Received(from, to, tokenId, ...)
     contract.call(to, "onARC2Received", system.getSender(), from, tokenId, ...)
   end
 end
+
+local function _exists(tokenId)
+  owner = _owners[tokenId] or address0
+  return owner ~= address0
+end
+
+-- Get the token name
+-- @type    query
+-- @return  (string) name of this token
+function name()
+  return _name:get()
+end
+
+-- Get the token symbol
+-- @type    query
+-- @return  (string) symbol of this token
+function symbol()
+  return _symbol:get()
+end
+
+-- Count of all NFTs assigned to an owner
+-- @type    query
+-- @param   owner  (address) a target address
+-- @return  (ubig) the number of NFT tokens of owner
+function balanceOf(owner)
+  assert(owner ~= address0, "ARC2: balanceOf - query for zero address")
+  return _balances[owner] or bignum.number(0)
+end
+
+-- Find the owner of an NFT
+-- @type    query
+-- @param   tokenId (str128) the NFT id
+-- @return  (address) the address of the owner of the NFT
+function ownerOf(tokenId)
+  owner = _owners[tokenId] or address0
+  assert(owner ~= address0, "ARC2: ownerOf - query for nonexistent token")
+  return owner
+end
+
 
 
 local function _mint(to, tokenId)
@@ -96,40 +123,12 @@ local function _burn(tokenId)
 end
 
 
--- Get the token name
--- @type    query
--- @return  (string) name of this token
-function name()
-  return _name:get()
+-- Approve `to` to operate on `tokenId`
+-- Emits an approve event
+local function _approve(to, tokenId)
+  _tokenApprovals[tokenId] = to
+  contract.event("approve", ownerOf(tokenId), to, tokenId)
 end
-
--- Get the token symbol
--- @type    query
--- @return  (string) symbol of this token
-function symbol()
-  return _symbol:get()
-end
-
--- Count of all NFTs assigned to an owner
--- @type    query
--- @param   owner  (address) a target address
--- @return  (ubig) the number of NFT tokens of owner
-function balanceOf(owner)
-  assert(owner ~= address0, "ARC2: balanceOf - query for zero address")
-  return _balances[owner] or bignum.number(0)
-end
-
-
--- Find the owner of an NFT
--- @type    query
--- @param   tokenId (str128) the NFT id
--- @return  (address) the address of the owner of the NFT
-function ownerOf(tokenId) 
-  owner = _owners[tokenId] or address0
-  assert(owner ~= address0, "ARC2: ownerOf - query for nonexistent token")
-  return owner
-end
-
 
 
 -- Transfer a token of 'from' to 'to'
