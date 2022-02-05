@@ -93,7 +93,7 @@ end
 
 
 
-local function _mint(to, tokenId)
+local function _mint(to, tokenId, ...)
   _typecheck(to, 'address')
   _typecheck(tokenId, 'str128')
 
@@ -102,6 +102,8 @@ local function _mint(to, tokenId)
 
   _balances[to] = (_balances[to] or bignum.number(0)) + 1
   _owners[tokenId] = to
+
+  _callOnARC2Received(nil, to, tokenId, ...)
 
   contract.event("mint", to, tokenId)
 end
