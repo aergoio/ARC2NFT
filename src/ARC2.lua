@@ -31,7 +31,7 @@ state.var {
     _symbol = state.value(),          -- string
 
     _owners = state.map(),            -- str128 -> address
-    _balances = state.map(),          -- address -> str128
+    _balances = state.map(),          -- address -> unsigned_bignum
 
     _tokenApprovals = state.map(),    -- str128 -> address
     _operatorApprovals = state.map(), -- address/address -> bool
