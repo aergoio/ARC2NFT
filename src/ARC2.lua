@@ -126,7 +126,11 @@ end
 -- Approve `to` to operate on `tokenId`
 -- Emits an approve event
 local function _approve(to, tokenId)
-  _tokenApprovals[tokenId] = to
+  if to == address0 then
+    _tokenApprovals:delete(tokenId)
+  else
+    _tokenApprovals[tokenId] = to
+  end
   contract.event("approve", ownerOf(tokenId), to, tokenId)
 end
 
