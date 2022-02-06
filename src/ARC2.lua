@@ -77,18 +77,15 @@ end
 -- @param   owner  (address) a target address
 -- @return  (ubig) the number of NFT tokens of owner
 function balanceOf(owner)
-  --assert(owner ~= address0, "ARC2: balanceOf - query for zero address")
   return _balances[owner] or bignum.number(0)
 end
 
 -- Find the owner of an NFT
 -- @type    query
 -- @param   tokenId (str128) the NFT id
--- @return  (address) the address of the owner of the NFT
+-- @return  (address) the address of the owner of the NFT, or nil if token does not exist
 function ownerOf(tokenId)
-  owner = _owners[tokenId]
-  assert(owner ~= nil, "ARC2: ownerOf - nonexistent token")
-  return owner
+  return _owners[tokenId]
 end
 
 
@@ -97,7 +94,6 @@ local function _mint(to, tokenId, ...)
   _typecheck(to, 'address')
   _typecheck(tokenId, 'str128')
 
-  assert(to ~= address0, "ARC2: mint - to the zero address")
   assert(not _exists(tokenId), "ARC2: mint - already minted token")
 
   _balances[to] = (_balances[to] or bignum.number(0)) + 1
@@ -114,8 +110,8 @@ local function _burn(tokenId)
 
   owner = ownerOf(tokenId)
 
-  -- Clear approvals from the previous owner
-  _approve(address0, tokenId)
+  -- clear approvals from the previous owner
+  _approve(nil, tokenId)
 
   _balances[owner] = _balances[owner] - 1
   _owners[tokenId] = nil
@@ -127,7 +123,7 @@ end
 -- Approve `to` to operate on `tokenId`
 -- Emits an approve event
 local function _approve(to, tokenId)
-  if to == address0 then
+  if to == nil then
     _tokenApprovals:delete(tokenId)
   else
     _tokenApprovals[tokenId] = to
@@ -151,13 +147,12 @@ function safeTransferFrom(from, to, tokenId, ...)
   assert(_exists(tokenId), "ARC2: safeTransferFrom - nonexisting token")
   owner = ownerOf(tokenId)
   assert(owner == from, "ARC2: safeTransferFrom - transfer of token that is not own")
-  assert(to ~= address0, "ARC2: safeTransferFrom - transfer to the zero address")
 
   spender = system.getSender()
   assert(spender == owner or getApproved(tokenId) == spender or isApprovedForAll(owner, spender), "ARC2: safeTransferFrom - caller is not owner nor approved")
 
   -- Clear approvals from the previous owner
-  _approve(address0, tokenId)
+  _approve(nil, tokenId)
 
   _balances[from] = _balances[from] - 1
   _balances[to] = (_balances[to] or bignum.number(0)) + 1
@@ -190,7 +185,7 @@ end
 -- @type    query
 -- @param   tokenId  (str128) the NFT token to find the approved address for
 -- @return  (address) the approved address for this NFT, or nil
-function getApproved(tokenId) 
+function getApproved(tokenId)
   _typecheck(tokenId, 'str128')
   assert(_exists(tokenId), "ARC2: getApproved - nonexisting token")
 
@@ -203,7 +198,7 @@ end
 -- @param   operator  (address) a operator's address
 -- @param   approved  (boolean) true if the operator is approved, false to revoke approval
 -- @event   approvalForAll(owner, operator, approved)
-function setApprovalForAll(operator, approved) 
+function setApprovalForAll(operator, approved)
   _typecheck(operator, 'address')
   _typecheck(approved, 'boolean')
 
@@ -219,10 +214,10 @@ end
 -- @param   owner       (address) owner's address
 -- @param   operator    (address) allowed address
 -- @return  (bool) true/false
-function isApprovedForAll(owner, operator) 
+function isApprovedForAll(owner, operator)
   return _operatorApprovals[owner .. '/' .. operator] or false
 end
 
 
 abi.register(setApprovalForAll, safeTransferFrom, approve)
-abi.register_view(name, symbol, balanceOf, ownerOf, getApproved, isApprovedForAll) 
+abi.register_view(name, symbol, balanceOf, ownerOf, getApproved, isApprovedForAll)
