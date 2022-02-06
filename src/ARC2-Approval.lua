@@ -75,8 +75,10 @@ function transferFrom(from, to, tokenId, ...)
   assert(owner ~= nil, "ARC2: safeTransferFrom - nonexisting token")
   assert(from == owner, "ARC2: safeTransferFrom - transfer of token that is not own")
 
-  local spender = system.getSender()
-  assert(spender == owner or getApproved(tokenId) == spender or isApprovedForAll(owner, spender), "ARC2: safeTransferFrom - caller is not owner nor approved")
+  local operator = system.getSender()
+  assert(operator == owner or getApproved(tokenId) == operator or isApprovedForAll(owner, operator), "ARC2: safeTransferFrom - caller is not owner nor approved")
+
+  contract.event("transfer", operator, from, to, tokenId)
 
   return _transfer(from, to, tokenId, ...)
 end

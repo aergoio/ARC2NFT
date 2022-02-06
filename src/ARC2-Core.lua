@@ -141,8 +141,6 @@ function _transfer(from, to, tokenId, ...)
   -- clear approvals from the previous owner
   _approve(nil, tokenId)
 
-  contract.event("transfer", from, to, tokenId)
-
   return _callOnARC2Received(from, to, tokenId, ...)
 end
 
@@ -162,6 +160,8 @@ function transfer(to, tokenId, ...)
   local owner = ownerOf(tokenId)
   assert(owner ~= nil, "ARC2: safeTransferFrom - nonexisting token")
   assert(from == owner, "ARC2: safeTransferFrom - transfer of token that is not own")
+
+  contract.event("transfer", nil, from, to, tokenId)
 
   return _transfer(from, to, tokenId, ...)
 end
