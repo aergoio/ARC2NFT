@@ -99,16 +99,16 @@ local function _mint(to, tokenId, ...)
   _balances[to] = (_balances[to] or bignum.number(0)) + 1
   _owners[tokenId] = to
 
-  _callOnARC2Received(nil, to, tokenId, ...)
-
   contract.event("mint", to, tokenId)
+
+  return _callOnARC2Received(nil, to, tokenId, ...)
 end
 
 
 local function _burn(tokenId)
   _typecheck(tokenId, 'str128')
 
-  owner = ownerOf(tokenId)
+  local owner = ownerOf(tokenId)
 
   -- clear approvals from the previous owner
   _approve(nil, tokenId)
@@ -132,35 +132,64 @@ local function _approve(to, tokenId)
 end
 
 
+function _transfer(from, to, tokenId, ...)
+
+  _balances[from] = _balances[from] - 1
+  _balances[to] = (_balances[to] or bignum.number(0)) + 1
+
+  _owners[tokenId] = to
+
+  contract.event("transfer", from, to, tokenId)
+
+  return _callOnARC2Received(from, to, tokenId, ...)
+end
+
+
+-- Transfer a token
+-- @type    call
+-- @param   to      (address) a receiver's address
+-- @param   tokenId (str128) the NFT token to send
+-- @param   ...     (Optional) addtional data, MUST be sent unaltered in call to 'onARC2Received' on 'to'
+-- @event   transfer(from, to, tokenId)
+function transfer(to, tokenId, ...)
+  _typecheck(to, 'address')
+  _typecheck(tokenId, 'str128')
+
+  local from = system.getSender()
+
+  local owner = ownerOf(tokenId)
+  assert(owner ~= nil, "ARC2: safeTransferFrom - nonexisting token")
+  assert(from == owner, "ARC2: safeTransferFrom - transfer of token that is not own")
+
+  -- clear approvals from the previous owner
+  _approve(nil, tokenId)
+
+  return _transfer(from, to, tokenId, ...)
+end
+
 -- Transfer a token of 'from' to 'to'
 -- @type    call
 -- @param   from    (address) a sender's address
 -- @param   to      (address) a receiver's address
 -- @param   tokenId (str128) the NFT token to send
 -- @param   ...     (Optional) addtional data, MUST be sent unaltered in call to 'onARC2Received' on 'to'
--- @event   transfer(from, to, value)
-function safeTransferFrom(from, to, tokenId, ...) 
+-- @event   transfer(from, to, tokenId)
+function transferFrom(from, to, tokenId, ...)
   _typecheck(from, 'address')
   _typecheck(to, 'address')
   _typecheck(tokenId, 'str128')
 
-  assert(_exists(tokenId), "ARC2: safeTransferFrom - nonexisting token")
-  owner = ownerOf(tokenId)
-  assert(owner == from, "ARC2: safeTransferFrom - transfer of token that is not own")
+  local owner = ownerOf(tokenId)
+  assert(owner ~= nil, "ARC2: safeTransferFrom - nonexisting token")
+  assert(from == owner, "ARC2: safeTransferFrom - transfer of token that is not own")
 
-  spender = system.getSender()
+  local spender = system.getSender()
   assert(spender == owner or getApproved(tokenId) == spender or isApprovedForAll(owner, spender), "ARC2: safeTransferFrom - caller is not owner nor approved")
 
-  -- Clear approvals from the previous owner
+  -- clear approvals from the previous owner
   _approve(nil, tokenId)
 
-  _balances[from] = _balances[from] - 1
-  _balances[to] = (_balances[to] or bignum.number(0)) + 1
-  _owners[tokenId] = to
-  
-  _callOnARC2Received(from, to, tokenId, ...)
-
-  contract.event("transfer", from, to, tokenId)
+  return _transfer(from, to, tokenId, ...)
 end
 
 
@@ -173,7 +202,7 @@ function approve(to, tokenId)
   _typecheck(to, 'address')
   _typecheck(tokenId, 'str128')
 
-  owner = ownerOf(tokenId)
+  local owner = ownerOf(tokenId)
   assert(owner ~= to, "ARC2: approve - to current owner")
   assert(system.getSender() == owner or isApprovedForAll(owner, system.getSender()), 
     "ARC2: approve - caller is not owner nor approved for all")
