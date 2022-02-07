@@ -14,12 +14,8 @@ arc2_blacklist = [[
 %blacklist%
 ]]
 
-arc2_all_approval = [[
-%all_approval%
-]]
-
-arc2_limited_approval = [[
-%limited_approval%
+arc2_approval = [[
+%approval%
 ]]
 
 arc2_constructor = [[
@@ -41,7 +37,7 @@ function constructor(name, symbol, initial_supply, max_supply, owner)
 end
 ]]
 
-function new_token(name, symbol, initial_supply, options, owner)
+function new_arc2_nft(name, symbol, initial_supply, options, owner)
 
   if options == nil or options == '' then
     options = {}
@@ -62,11 +58,8 @@ function new_token(name, symbol, initial_supply, options, owner)
   if options["blacklist"] then
     contract_code = contract_code .. arc2_blacklist
   end
-  if options["all_approval"] then
-    contract_code = contract_code .. arc2_all_approval
-  end
-  if options["limited_approval"] then
-    contract_code = contract_code .. arc2_limited_approval
+  if options["approval"] then
+    contract_code = contract_code .. arc2_approval
   end
 
   local max_supply = options["max_supply"]
