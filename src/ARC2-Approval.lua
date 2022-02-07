@@ -4,6 +4,20 @@ state.var {
 }
 
 
+-- Approve `to` to operate on `tokenId`
+-- Emits an approve event
+local function _approve(to, tokenId)
+  local token = _tokens[tokenId]
+  if to == nil then
+    table.remove(token, "approved")
+  else
+    token["approved"] = to
+  end
+  _tokens[tokenId] = token
+  contract.event("approve", token["owner"], to, tokenId)
+end
+
+
 -- Change or reaffirm the approved address for an NFT
 -- @type    call
 -- @param   to          (address) the new approved NFT controller

@@ -123,21 +123,7 @@ local function _burn(tokenId)
 end
 
 
--- Approve `to` to operate on `tokenId`
--- Emits an approve event
-local function _approve(to, tokenId)
-  local token = _tokens[tokenId]
-  if to == nil then
-    table.remove(token, "approved")
-  else
-    token["approved"] = to
-  end
-  _tokens[tokenId] = token
-  contract.event("approve", token["owner"], to, tokenId)
-end
-
-
-function _transfer(from, to, tokenId, ...)
+local function _transfer(from, to, tokenId, ...)
 
   _balances[from] = _balances[from] - 1
   _balances[to] = (_balances[to] or bignum.number(0)) + 1
