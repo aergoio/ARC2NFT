@@ -31,8 +31,8 @@ state.var {
   _name = state.value(),            -- string
   _symbol = state.value(),          -- string
 
-  _tokens = state.map()             -- str128 -> { owner: address, approved: address }
-  _balances = state.map(),          -- address -> unsigned_bignum
+  _tokens = state.map(),            -- str128 -> { owner: address, approved: address }
+  _balances = state.map()           -- address -> unsigned_bignum
 }
 
 
