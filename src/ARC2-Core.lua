@@ -158,8 +158,8 @@ function transfer(to, tokenId, ...)
   local from = system.getSender()
 
   local owner = ownerOf(tokenId)
-  assert(owner ~= nil, "ARC2: safeTransferFrom - nonexisting token")
-  assert(from == owner, "ARC2: safeTransferFrom - transfer of token that is not own")
+  assert(owner ~= nil, "ARC2: transfer - nonexisting token")
+  assert(from == owner, "ARC2: transfer - transfer of token that is not own")
 
   contract.event("transfer", nil, from, to, tokenId)
 

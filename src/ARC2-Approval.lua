@@ -28,7 +28,7 @@ function approve(to, tokenId)
   _typecheck(tokenId, 'str128')
 
   local owner = ownerOf(tokenId)
-  assert(owner ~= nil, "ARC2: safeTransferFrom - nonexisting token")
+  assert(owner ~= nil, "ARC2: approve - nonexisting token")
   assert(owner ~= to, "ARC2: approve - to current owner")
   assert(system.getSender() == owner or isApprovedForAll(owner, system.getSender()), 
     "ARC2: approve - caller is not owner nor approved for all")
@@ -87,11 +87,11 @@ function transferFrom(from, to, tokenId, ...)
   _typecheck(tokenId, 'str128')
 
   local owner = ownerOf(tokenId)
-  assert(owner ~= nil, "ARC2: safeTransferFrom - nonexisting token")
-  assert(from == owner, "ARC2: safeTransferFrom - transfer of token that is not own")
+  assert(owner ~= nil, "ARC2: transferFrom - nonexisting token")
+  assert(from == owner, "ARC2: transferFrom - transfer of token that is not own")
 
   local operator = system.getSender()
-  assert(operator == owner or getApproved(tokenId) == operator or isApprovedForAll(owner, operator), "ARC2: safeTransferFrom - caller is not owner nor approved")
+  assert(operator == owner or getApproved(tokenId) == operator or isApprovedForAll(owner, operator), "ARC2: transferFrom - caller is not owner nor approved")
 
   contract.event("transfer", operator, from, to, tokenId)
 
