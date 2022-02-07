@@ -8,13 +8,17 @@ state.var {
 -- Emits an approve event
 local function _approve(to, tokenId)
   local token = _tokens[tokenId]
+  local owner = token["owner"]
+  assert(not _paused:get(), "ARC2: paused contract")
+  assert(not _blacklist[owner], "ARC2: owner is on blacklist")
   if to == nil then
     table.remove(token, "approved")
   else
+    assert(not _blacklist[to], "ARC2: user is on blacklist")
     token["approved"] = to
   end
   _tokens[tokenId] = token
-  contract.event("approve", token["owner"], to, tokenId)
+  contract.event("approve", owner, to, tokenId)
 end
 
 
@@ -57,10 +61,19 @@ function setApprovalForAll(operator, approved)
   _typecheck(operator, 'address')
   _typecheck(approved, 'boolean')
 
-  assert(operator ~= system.getSender(), "ARC2: setApprovalForAll - to caller")
-  _operatorApprovals[system.getSender() .. '/' .. operator] = approved
+  local owner = system.getSender()
 
-  contract.event("approvalForAll", system.getSender(), operator, approved)
+  assert(not _paused:get(), "ARC2: paused contract")
+  assert(not _blacklist[owner], "ARC2: owner is on blacklist")
+  if approved then
+    assert(not _blacklist[operator], "ARC2: operator is on blacklist")
+  end
+
+  assert(operator ~= owner, "ARC2: setApprovalForAll - to caller")
+
+  _operatorApprovals[owner .. '/' .. operator] = approved
+
+  contract.event("approvalForAll", owner, operator, approved)
 end
 
 

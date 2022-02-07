@@ -32,7 +32,13 @@ state.var {
   _symbol = state.value(),          -- string
 
   _tokens = state.map(),            -- str128 -> { owner: address, approved: address }
-  _balances = state.map()           -- address -> unsigned_bignum
+  _balances = state.map(),          -- address -> unsigned_bignum
+
+  -- Pausable
+  _paused = state.value(),          -- boolean
+
+  -- Blacklist
+  _blacklist = state.map()          -- address -> boolean
 }
 
 
@@ -43,6 +49,8 @@ local function _init(name, symbol)
   
   _name:set(name)
   _symbol:set(symbol)
+
+  _paused:set(false)
 end
 
 local function _callOnARC2Received(from, to, tokenId, ...)
@@ -96,6 +104,9 @@ local function _mint(to, tokenId, ...)
   _typecheck(to, 'address')
   _typecheck(tokenId, 'str128')
 
+  assert(not _paused:get(), "ARC2: paused contract")
+  assert(not _blacklist[to], "ARC2: recipient is on blacklist")
+
   assert(not _exists(tokenId), "ARC2: mint - already minted token")
 
   local token = {
@@ -116,6 +127,9 @@ local function _burn(tokenId)
 
   local owner = ownerOf(tokenId)
 
+  assert(not _paused:get(), "ARC2: paused contract")
+  assert(not _blacklist[owner], "ARC2: owner is on blacklist")
+
   _tokens:delete(tokenId)
   _balances[owner] = _balances[owner] - 1
 
@@ -124,6 +138,9 @@ end
 
 
 local function _transfer(from, to, tokenId, ...)
+  assert(not _paused:get(), "ARC2: paused contract")
+  assert(not _blacklist[from], "ARC2: sender is on blacklist")
+  assert(not _blacklist[to], "ARC2: recipient is on blacklist")
 
   _balances[from] = _balances[from] - 1
   _balances[to] = (_balances[to] or bignum.number(0)) + 1
@@ -159,7 +176,7 @@ function transfer(to, tokenId, ...)
 
   local owner = ownerOf(tokenId)
   assert(owner ~= nil, "ARC2: transfer - nonexisting token")
-  assert(from == owner, "ARC2: transfer - transfer of token that is not own")
+  assert(from == owner, "ARC2: transfer of token that is not own")
 
   contract.event("transfer", nil, from, to, tokenId)
 
