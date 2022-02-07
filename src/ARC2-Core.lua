@@ -26,15 +26,13 @@ end
 
 address0 = '1111111111111111111111111111111111111111111111111111'
 
-  
+
 state.var {
   _name = state.value(),            -- string
   _symbol = state.value(),          -- string
 
-  _owners = state.map(),            -- str128 -> address
+  _tokens = state.map()             -- str128 -> { owner: address, approved: address }
   _balances = state.map(),          -- address -> unsigned_bignum
-
-  _tokenApprovals = state.map(),    -- str128 -> address
 }
 
 
@@ -54,7 +52,7 @@ local function _callOnARC2Received(from, to, tokenId, ...)
 end
 
 local function _exists(tokenId)
-  return _owners[tokenId] ~= nil
+  return _tokens[tokenId] ~= nil
 end
 
 -- Get the token name
@@ -84,7 +82,12 @@ end
 -- @param   tokenId (str128) the NFT id
 -- @return  (address) the address of the owner of the NFT, or nil if token does not exist
 function ownerOf(tokenId)
-  return _owners[tokenId]
+  local token = _tokens[tokenId]
+  if token == nil then
+    return nil
+  else
+    return token["owner"]
+  end
 end
 
 
@@ -95,8 +98,12 @@ local function _mint(to, tokenId, ...)
 
   assert(not _exists(tokenId), "ARC2: mint - already minted token")
 
+  local token = {
+    owner = to
+  }
+  _tokens[tokenId] = token
+
   _balances[to] = (_balances[to] or bignum.number(0)) + 1
-  _owners[tokenId] = to
 
   contract.event("mint", to, tokenId)
 
@@ -109,11 +116,8 @@ local function _burn(tokenId)
 
   local owner = ownerOf(tokenId)
 
-  -- clear approvals from the previous owner
-  _approve(nil, tokenId)
-
+  _tokens:delete(tokenId)
   _balances[owner] = _balances[owner] - 1
-  _owners[tokenId] = nil
 
   contract.event("burn", owner, tokenId)
 end
@@ -122,12 +126,14 @@ end
 -- Approve `to` to operate on `tokenId`
 -- Emits an approve event
 local function _approve(to, tokenId)
+  local token = _tokens[tokenId]
   if to == nil then
-    _tokenApprovals:delete(tokenId)
+    table.remove(token, "approved")
   else
-    _tokenApprovals[tokenId] = to
+    token["approved"] = to
   end
-  contract.event("approve", ownerOf(tokenId), to, tokenId)
+  _tokens[tokenId] = token
+  contract.event("approve", token["owner"], to, tokenId)
 end
 
 
@@ -136,10 +142,18 @@ function _transfer(from, to, tokenId, ...)
   _balances[from] = _balances[from] - 1
   _balances[to] = (_balances[to] or bignum.number(0)) + 1
 
-  _owners[tokenId] = to
+--[[
+  local token = _tokens[tokenId]
+  token["owner"] = to
+  table.remove(token, "approved")  -- clear approval
+  _tokens[tokenId] = token
+]]
 
-  -- clear approvals from the previous owner
-  _approve(nil, tokenId)
+  -- this will also clear approvals from the previous owner
+  local token = {
+    owner = to
+  }
+  _tokens[tokenId] = token
 
   return _callOnARC2Received(from, to, tokenId, ...)
 end

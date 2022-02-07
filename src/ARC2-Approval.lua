@@ -14,6 +14,7 @@ function approve(to, tokenId)
   _typecheck(tokenId, 'str128')
 
   local owner = ownerOf(tokenId)
+  assert(owner ~= nil, "ARC2: safeTransferFrom - nonexisting token")
   assert(owner ~= to, "ARC2: approve - to current owner")
   assert(system.getSender() == owner or isApprovedForAll(owner, system.getSender()), 
     "ARC2: approve - caller is not owner nor approved for all")
@@ -27,9 +28,9 @@ end
 -- @return  (address) the approved address for this NFT, or nil
 function getApproved(tokenId)
   _typecheck(tokenId, 'str128')
-  assert(_exists(tokenId), "ARC2: getApproved - nonexisting token")
-
-  return _tokenApprovals[tokenId]
+  local token = _tokens[tokenId]
+  assert(token ~= nil, "ARC2: getApproved - nonexisting token")
+  return token["approved"]
 end
 
 
