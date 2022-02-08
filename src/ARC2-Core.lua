@@ -88,6 +88,13 @@ function symbol()
   return _symbol:get()
 end
 
+-- Count of all NFTs
+-- @type    query
+-- @return  (integer) the number of non-fungible tokens on this contract
+function totalSupply()
+  return _last_index:get() - _num_burned:get()
+end
+
 -- Count of all NFTs assigned to an owner
 -- @type    query
 -- @param   owner  (address) a target address
@@ -216,10 +223,6 @@ function burn(tokenId)
   _burn(tokenId)
 end
 
-
-function totalSupply()
-  return _last_index:get() - _num_burned:get()
-end
 
 function nextToken(prev_index)
   _typecheck(prev_index, 'uint')
