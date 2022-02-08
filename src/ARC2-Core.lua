@@ -178,7 +178,7 @@ function transfer(to, tokenId, ...)
   assert(owner ~= nil, "ARC2: transfer - nonexisting token")
   assert(from == owner, "ARC2: transfer of token that is not own")
 
-  contract.event("transfer", nil, from, to, tokenId)
+  contract.event("transfer", from, to, tokenId, nil)
 
   return _transfer(from, to, tokenId, ...)
 end

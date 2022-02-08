@@ -106,7 +106,7 @@ function transferFrom(from, to, tokenId, ...)
   local operator = system.getSender()
   assert(operator == owner or getApproved(tokenId) == operator or isApprovedForAll(owner, operator), "ARC2: transferFrom - caller is not owner nor approved")
 
-  contract.event("transfer", operator, from, to, tokenId)
+  contract.event("transfer", from, to, tokenId, operator)
 
   return _transfer(from, to, tokenId, ...)
 end
