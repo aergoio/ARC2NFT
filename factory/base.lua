@@ -2,6 +2,10 @@ arc2_core = [[
 %core%
 ]]
 
+arc2_burnable = [[
+%burnable%
+]]
+
 arc2_mintable = [[
 %mintable%
 ]]
@@ -49,6 +53,9 @@ function new_arc2_nft(name, symbol, initial_supply, options, owner)
 
   local contract_code = arc2_core .. arc2_constructor
 
+  if options["burnable"] then
+    contract_code = contract_code .. arc2_burnable
+  end
   if options["mintable"] then
     contract_code = contract_code .. arc2_mintable
   end

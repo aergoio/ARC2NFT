@@ -10,6 +10,7 @@ process_file() {
 }
 
 process_file "Core" "%core%"
+process_file "Burnable" "%burnable%"
 process_file "Mintable" "%mintable%"
 process_file "Pausable" "%pausable%"
 process_file "Blacklist" "%blacklist%"

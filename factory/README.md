@@ -13,9 +13,10 @@ the arguments:
 
 The options is a table informing which extensions to add to the token:
 
+* burnable
 * mintable
-* blacklist
 * pausable
+* blacklist
 * approval
 
 The `owner` is the address that will be registered as the owner of the
