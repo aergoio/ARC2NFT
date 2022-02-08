@@ -40,7 +40,7 @@ state.var {
   _last_index = state.value(),      -- integer
   _ids = state.map(),               -- integer -> str128
   _tokens = state.map(),            -- str128 -> { owner: address, approved: address }
-  _balances = state.map(),          -- address -> unsigned_bignum
+  _balances = state.map(),          -- address -> integer
 
   -- Pausable
   _paused = state.value(),          -- boolean
@@ -91,9 +91,9 @@ end
 -- Count of all NFTs assigned to an owner
 -- @type    query
 -- @param   owner  (address) a target address
--- @return  (ubig) the number of NFT tokens of owner
+-- @return  (integer) the number of NFT tokens of owner
 function balanceOf(owner)
-  return _balances[owner] or bignum.number(0)
+  return _balances[owner] or 0
 end
 
 -- Find the owner of an NFT
@@ -129,7 +129,7 @@ local function _mint(to, tokenId, ...)
   }
   _tokens[tokenId] = token
 
-  _balances[to] = (_balances[to] or bignum.number(0)) + 1
+  _balances[to] = (_balances[to] or 0) + 1
 
   contract.event("mint", to, tokenId)
 
@@ -165,7 +165,7 @@ local function _transfer(from, to, tokenId, ...)
   assert(not _blacklist[to], "ARC2: recipient is on blacklist")
 
   _balances[from] = _balances[from] - 1
-  _balances[to] = (_balances[to] or bignum.number(0)) + 1
+  _balances[to] = (_balances[to] or 0) + 1
 
 --[[
   local token = _tokens[tokenId]
