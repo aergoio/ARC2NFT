@@ -10,7 +10,7 @@
 -- @event   addToBlacklist(account_list)
 
 function addToBlacklist(account_list)
-  assert(system.getSender() == system.getCreator(), "ARC2: only owner can blacklist anothers")
+  assert(system.getSender() == system.getCreator(), "ARC2: only owner can blacklist accounts")
 
   for i = 1, #account_list do
     _typecheck(account_list[i], 'address')
@@ -27,7 +27,7 @@ end
 -- @event   removeFromBlacklist(account_list)
 
 function removeFromBlacklist(account_list)
-  assert(system.getSender() == system.getCreator(), "ARC2: only owner can blacklist anothers")
+  assert(system.getSender() == system.getCreator(), "ARC2: only owner can blacklist accounts")
 
   for i = 1, #account_list do
     _typecheck(account_list[i], 'address')
