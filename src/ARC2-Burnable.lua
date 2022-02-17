@@ -2,6 +2,8 @@
 -- Aergo Standard NFT Interface (Proposal) - 20210425
 ------------------------------------------------------------------------------
 
+extensions["burnable"] = true
+
 function burn(tokenId)
   _typecheck(tokenId, 'str128')
 

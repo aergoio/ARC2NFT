@@ -3,6 +3,7 @@
 -- Blacklist
 ------------------------------------------------------------------------------
 
+extensions["blacklist"] = true
 
 -- Add accounts to blacklist.
 -- @type    call

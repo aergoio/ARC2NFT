@@ -2,6 +2,9 @@
 -- Aergo Standard NFT Interface (Proposal) - 20210425
 ------------------------------------------------------------------------------
 
+extensions["approval"] = true
+
+
 state.var {
   _operatorApprovals = state.map(), -- address/address -> bool
 }

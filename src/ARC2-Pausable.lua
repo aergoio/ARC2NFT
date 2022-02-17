@@ -3,6 +3,8 @@
 -- Pausable
 ------------------------------------------------------------------------------
 
+extensions["pausable"] = true
+
 state.var {
   -- pausable
   _pauser = state.map(),   -- address -> boolean

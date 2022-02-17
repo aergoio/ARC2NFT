@@ -2,6 +2,8 @@
 -- Aergo Standard NFT Interface (Proposal) - 20210425
 ------------------------------------------------------------------------------
 
+extensions["mintable"] = true
+
 state.var {
   -- mintable
   _minter = state.map(),       -- address -> boolean

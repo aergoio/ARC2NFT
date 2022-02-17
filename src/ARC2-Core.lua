@@ -2,6 +2,8 @@
 -- Aergo Standard NFT Interface (Proposal) - 20210425
 ------------------------------------------------------------------------------
 
+extensions = {}
+
 -- A internal type check function
 -- @type internal
 -- @param x variable to check
@@ -306,5 +308,17 @@ local function escape(str)
   return str:gsub("[%(%)%.%%%+%-%*%?%[%]%^%$]", function(c) return "%" .. c end)
 end
 
-abi.register(transfer)
+
+-- returns a JSON string containing the list of ARC2 extensions
+-- that were included on the contract
+function arc2_extensions()
+  local list = {}
+  for name,_ in pairs(extensions) do
+    table.insert(list, name)
+  end
+  return json.encode(list)
+end
+
+
+abi.register(transfer, arc2_extensions)
 abi.register_view(name, symbol, balanceOf, ownerOf, totalSupply, nextToken, findToken)
