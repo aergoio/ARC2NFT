@@ -71,6 +71,7 @@ function new_arc2_nft(name, symbol, initial_supply, options, owner)
 
   local max_supply = options["max_supply"]
   if max_supply then
+    assert(options["mintable"], "max_supply is only available with the mintable extension")
     max_supply = tonumber(max_supply)
     if initial_supply then
       assert(max_supply >= #initial_supply, "the max supply must be bigger than the initial supply count")
