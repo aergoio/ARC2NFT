@@ -1,8 +1,30 @@
 # Aergo Non-Fungible Token Contract, ARC2
 
-This defines interface and behaviors for aergo non-fungible token contract.
+Although NFTs are mostly known to record image ownership, they can be used for many cases:
+
+* Tickets (shows, parking, airplane, hotel reservation...)
+* Access control
+* Identity Verification (including birth certificates and KYC)
+* Documents
+* Academic Credentials
+* Medical Records
+* Voting and DAOs
+* Intellectual Property and Patents
+* Engineering/Architectural design (including usage rights)
+* Product Authenticity and Supply Chain (food, pharmaceuticals, fashion...)
+* Real-estate property (including rent)
+* Ownership tracking
+* History tracking (eg. car maintainance services)
+* Insurance
+* Record shares of resources
+* Gaming
+* Sports
+
 
 ## Abstract
+
+This defines interface and behaviors for aergo non-fungible token contract.
+
 
 ## Specification
 
