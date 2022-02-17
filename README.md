@@ -1,11 +1,11 @@
-# Aergo Non-Fungible Token Contract, ARC2
+# Aergo Non-Fungible Token Contract - ARC2
 
 Although NFTs are mostly known to record image ownership, they can be used for many cases:
 
 * Tickets (shows, parking, airplane, hotel reservation...)
 * Access control
 * Identity Verification (including birth certificates and KYC)
-* Documents
+* Documents (including certificates and licenses)
 * Academic Credentials
 * Medical Records
 * Voting and DAOs
@@ -23,14 +23,14 @@ Although NFTs are mostly known to record image ownership, they can be used for m
 
 ## Abstract
 
-This defines interface and behaviors for aergo non-fungible token contract.
+This defines the interface and behaviors for aergo non-fungible token contract.
 
 
 ## Specification
 
 ### Token
 
-Following is an interface contract declaring the required functions to meet the ARC-2 standard.
+The following is an interface contract declaring the required functions to meet the ARC-2 standard.
 
 (NOTE) The token id is a string of up to 128 bytes
 
@@ -234,4 +234,79 @@ Contracts that want to handle tokens must implement the following function to de
 -- @param   ...         addtional data, by-passed from 'transfer' or 'mint' arguments
 -- @type    call
 function onARC2Received(operator, from, tokenId, ...) end
+```
+
+
+### List and Find Tokens
+
+To list tokens we use the `nextToken` function.
+
+To find tokens with specific properties we use the `nextToken` function.
+It retrieves the first token found that matches the query.
+The query is a lua table that can contain these fields:
+
+* **owner**    - the owner of the token (address)
+* **contains** - check if the tokenId contains this string
+* **pattern**  - check if the tokenId matches this Lua regex pattern
+
+The `prev_index` must be `0` in the first call.
+For the next calls, just inform the returned index from the previous call.
+
+The returned value is `index, tokenId`
+
+If no token is found with the given query, it returns `nil, nil`
+
+
+#### Examples
+
+List all tokens on the contract:
+
+```lua
+  local index = 0
+  local tokenId
+  do
+    index, tokenId = nextToken(index)
+    if tokenId then
+      ...
+    end
+  while index > 0
+```
+
+List the tokens from an user:
+
+```lua
+  local index = 0
+  local tokenId
+  do
+    index, tokenId = findToken({owner=address}, index)
+    if tokenId then
+      ...
+    end
+  while index > 0
+```
+
+List the tokens with a specific property:
+
+```lua
+  local index = 0
+  local tokenId
+  do
+    index, tokenId = findToken({pattern=text}, index)
+    if tokenId then
+      ...
+    end
+  while index > 0
+```
+
+List the tokens from an user that have a specific property:
+
+```lua
+  local index = 0
+  local tokenId
+  do
+    index, tokenId = findToken({owner=address,pattern=text}, index)
+    if tokenId then
+      ...
+    end
+  while index > 0
 ```
