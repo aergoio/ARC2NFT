@@ -241,7 +241,16 @@ function onARC2Received(operator, from, tokenId, ...) end
 
 To list tokens we use the `nextToken` function.
 
-To find tokens with specific properties we use the `nextToken` function.
+```lua
+function nextToken(prev_index)
+```
+
+To find tokens with specific properties we use the `findToken` function.
+
+```lua
+function findToken(query, prev_index)
+```
+
 It retrieves the first token found that matches the query.
 The query is a lua table that can contain these fields:
 
