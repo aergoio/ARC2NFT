@@ -255,6 +255,16 @@ function nextToken(prev_index)
   return index, tokenId
 end
 
+function tokenFromUser(user, position)
+  _typecheck(user, 'address')
+  _typecheck(position, 'uint')
+
+  local list = _user_tokens[user] or {}
+  local index = list[position]
+  local tokenId = _ids[tostring(index)]
+  return tokenId
+end
+
 -- retrieve the first token found that mathes the query
 -- the query is a table that can contain these fields:
 --   owner    - the owner of the token (address)
@@ -338,4 +348,4 @@ end
 
 
 abi.register(transfer, arc2_extensions)
-abi.register_view(name, symbol, balanceOf, ownerOf, totalSupply, nextToken, findToken)
+abi.register_view(name, symbol, balanceOf, ownerOf, totalSupply, nextToken, tokenFromUser, findToken)
