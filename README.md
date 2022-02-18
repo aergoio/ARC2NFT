@@ -293,16 +293,13 @@ List the tokens from an user:
   local position = 1
   while true do
     local tokenId = tokenFromUser(owner, position)
-    if tokenId then
-      ...
-    else
-      break
-    end
+    if tokenId == nil then break end
+    ...
     position = position + 1
   end
 ```
 
-or:
+Or:
 
 ```lua
   local index = 0
