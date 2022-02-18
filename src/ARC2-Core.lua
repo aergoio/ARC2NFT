@@ -232,6 +232,10 @@ function transfer(to, tokenId, ...)
 end
 
 
+
+-- Token List and Search Functions
+
+
 function nextToken(prev_index)
   _typecheck(prev_index, 'uint')
 
@@ -248,7 +252,7 @@ function nextToken(prev_index)
     tokenId = _ids[tostring(index)]
   while tokenId == nil and index < last_index
 
-  if index == last_index and tokenId == nil then
+  if tokenId == nil then
     index = nil
   end
 
@@ -283,23 +287,46 @@ function findToken(query, prev_index)
     query["pattern"] = escape(contains)
   end
 
-  local index = prev_index
-  local last_index = _last_index:get()
-  local tokenId, owner
+  local index, tokenId
+  local owner = query["owner"]
 
-  if index >= last_index then
-    return nil, nil
+  if owner then
+    -- iterate over the tokens from this user
+    local list = _user_tokens[owner] or {}
+    local check_tokens = (prev_index == 0)
+
+    for position,index in ipairs(list) do
+      if check_tokens then
+        tokenId = _ids[tostring(index)]
+        if token_matches(tokenId, query) then
+          break
+        else
+          tokenId = nil
+        end
+      elseif index == prev_index then
+        check_tokens = true
+      end
+    end
+
+  else
+    -- iterate over all the tokens
+    local last_index = _last_index:get()
+    index = prev_index
+
+    if index >= last_index then
+      return nil, nil
+    end
+
+    do
+      index = index + 1
+      tokenId = _ids[tostring(index)]
+      if not token_matches(tokenId, query) then
+        tokenId = nil
+      end
+    while tokenId == nil and index < last_index
   end
 
-  do
-    index = index + 1
-    tokenId = _ids[tostring(index)]
-    if not token_matches(tokenId, query) then
-      tokenId = nil
-    end
-  while tokenId == nil and index < last_index
-
-  if index == last_index and tokenId == nil then
+  if tokenId == nil then
     index = nil
   end
 
@@ -312,15 +339,7 @@ local function token_matches(tokenId, query)
     return false
   end
 
-  local user = query["owner"]
   local pattern = query["pattern"]
-
-  if user then
-    local owner = ownerOf(tokenId)
-    if owner ~= user then
-      return false
-    end
-  end
 
   if pattern then
     if not tokenId:match(pattern) then
