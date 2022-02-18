@@ -41,7 +41,7 @@ state.var {
   _num_burned = state.value(),      -- integer
   _last_index = state.value(),      -- integer
   _ids = state.map(),               -- integer -> str128
-  _tokens = state.map(),            -- str128 -> { owner: address, approved: address }
+  _tokens = state.map(),            -- str128 -> { index: integer, owner: address, approved: address }
   _balances = state.map(),          -- address -> integer
 
   -- Pausable
@@ -134,6 +134,7 @@ local function _mint(to, tokenId, ...)
   _ids[tostring(index)] = tokenId
 
   local token = {
+    index = index,
     owner = to
   }
   _tokens[tokenId] = token
@@ -149,14 +150,14 @@ end
 local function _burn(tokenId)
   _typecheck(tokenId, 'str128')
 
-  local owner = ownerOf(tokenId)
+  local token = _tokens[tokenId]
+  assert(token ~= nil, "ARC2: burn: token not found")
+  local index = token["index"]
+  local owner = token["owner"]
 
   assert(not _paused:get(), "ARC2: paused contract")
   assert(not _blacklist[owner], "ARC2: owner is on blacklist")
 
-  local index,_ = findToken({contains=tokenId}, 0)
-  assert(index ~= nil and index > 0, "burn: token not found")
-  -- _ids[tostring(index)] = nil
   _ids:delete(tostring(index))
 
   _tokens:delete(tokenId)
@@ -176,17 +177,9 @@ local function _transfer(from, to, tokenId, ...)
   _balances[from] = _balances[from] - 1
   _balances[to] = (_balances[to] or 0) + 1
 
---[[
   local token = _tokens[tokenId]
   token["owner"] = to
   table.remove(token, "approved")  -- clear approval
-  _tokens[tokenId] = token
-]]
-
-  -- this will also clear approvals from the previous owner
-  local token = {
-    owner = to
-  }
   _tokens[tokenId] = token
 
   return _callOnARC2Received(from, to, tokenId, ...)
