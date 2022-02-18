@@ -42,7 +42,7 @@ state.var {
   _last_index = state.value(),      -- integer
   _ids = state.map(),               -- integer -> str128
   _tokens = state.map(),            -- str128 -> { index: integer, owner: address, approved: address }
-  _balances = state.map(),          -- address -> integer
+  _user_tokens = state.map(),       -- address -> array of integers (index to tokenId)
 
   -- Pausable
   _paused = state.value(),          -- boolean
@@ -102,7 +102,8 @@ end
 -- @param   owner  (address) a target address
 -- @return  (integer) the number of NFT tokens of owner
 function balanceOf(owner)
-  return _balances[owner] or 0
+  local list = _user_tokens[owner] or {}
+  return #list
 end
 
 -- Find the owner of an NFT
@@ -118,6 +119,27 @@ function ownerOf(tokenId)
   end
 end
 
+
+local function add_to_owner(index, owner)
+  local list = _user_tokens[owner] or {}
+  table.insert(list, index)
+  _user_tokens[owner] = list
+end
+
+local function remove_from_owner(index, owner)
+  local list = _user_tokens[owner] or {}
+  for position,value in ipairs(list) do
+    if value == index then
+      table.remove(list, position)
+      break
+    end
+  end
+  if #list > 0 then
+    _user_tokens[owner] = list
+  else
+    _user_tokens:delete(owner)
+  end
+end
 
 
 local function _mint(to, tokenId, ...)
@@ -139,7 +161,7 @@ local function _mint(to, tokenId, ...)
   }
   _tokens[tokenId] = token
 
-  _balances[to] = (_balances[to] or 0) + 1
+  add_to_owner(index, to)
 
   contract.event("mint", to, tokenId)
 
@@ -161,7 +183,8 @@ local function _burn(tokenId)
   _ids:delete(tostring(index))
 
   _tokens:delete(tokenId)
-  _balances[owner] = _balances[owner] - 1
+
+  remove_from_owner(index, owner)
 
   _num_burned:set(_num_burned:get() + 1)
 
@@ -174,13 +197,14 @@ local function _transfer(from, to, tokenId, ...)
   assert(not _blacklist[from], "ARC2: sender is on blacklist")
   assert(not _blacklist[to], "ARC2: recipient is on blacklist")
 
-  _balances[from] = _balances[from] - 1
-  _balances[to] = (_balances[to] or 0) + 1
-
   local token = _tokens[tokenId]
   token["owner"] = to
   table.remove(token, "approved")  -- clear approval
   _tokens[tokenId] = token
+
+  local index = token["index"]
+  remove_from_owner(index, from)
+  add_to_owner(index, to)
 
   return _callOnARC2Received(from, to, tokenId, ...)
 end
