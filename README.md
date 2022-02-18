@@ -299,20 +299,20 @@ List the tokens from an user:
   end
 ```
 
-Or:
+List the tokens that contain a specific text:
 
 ```lua
   local index = 0
   local tokenId
   do
-    index, tokenId = findToken({owner=address}, index)
+    index, tokenId = findToken({contain=text}, index)
     if tokenId then
       ...
     end
   while index > 0
 ```
 
-List the tokens with a specific property:
+List the tokens that match a specific regex pattern:
 
 ```lua
   local index = 0
@@ -325,7 +325,7 @@ List the tokens with a specific property:
   while index > 0
 ```
 
-List the tokens from an user that have a specific property:
+List the tokens from an user that match a specific regex pattern:
 
 ```lua
   local index = 0
