@@ -197,6 +197,8 @@ local function _transfer(from, to, tokenId, ...)
   assert(not _blacklist[from], "ARC2: sender is on blacklist")
   assert(not _blacklist[to], "ARC2: recipient is on blacklist")
 
+  assert(extensions["non_transferable"] == nil, "ARC2: this token is non-transferable")
+
   local token = _tokens[tokenId]
   token["owner"] = to
   table.remove(token, "approved")  -- clear approval

@@ -71,6 +71,13 @@ function ownerOf(tokenId) end
 function transfer(to, tokenId, ...) end
 ```
 
+### NonTransferable extension
+
+There are no exported functions
+
+It is used to make non-transferable tokens (badges)
+
+
 ### Burnable extension
 
 ``` lua
@@ -305,7 +312,7 @@ List the tokens that contain a specific text:
   local index = 0
   local tokenId
   do
-    index, tokenId = findToken({contain=text}, index)
+    index, tokenId = findToken({contains=text}, index)
     if tokenId then
       ...
     end
