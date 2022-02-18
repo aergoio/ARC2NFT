@@ -245,6 +245,12 @@ To list tokens we use the `nextToken` function.
 function nextToken(prev_index)
 ```
 
+To list tokens from an user we use the `tokenFromUser` function.
+
+```lua
+function tokenFromUser(user, position)
+```
+
 To find tokens with specific properties we use the `findToken` function.
 
 ```lua
@@ -282,6 +288,21 @@ List all tokens on the contract:
 ```
 
 List the tokens from an user:
+
+```lua
+  local position = 1
+  while true do
+    local tokenId = tokenFromUser(owner, position)
+    if tokenId then
+      ...
+    else
+      break
+    end
+    position = position + 1
+  end
+```
+
+or:
 
 ```lua
   local index = 0
