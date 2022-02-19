@@ -79,16 +79,17 @@ end
 -- Mint a new non-fungible token
 -- @type    call
 -- @param   to       (address) recipient's address
--- @param   tokenId  (str128) the NFT id
+-- @param   tokenId  (str128) the non-fungible token id
+-- @param   metadata (table) lua table containing key/value pairs
 -- @param   ...      additional data, is sent unaltered in call to 'tokensReceived' on 'to'
 -- @return  value returned from 'tokensReceived' callback, or nil
 -- @event   mint(to, tokenId)
 
-function mint(to, tokenId, ...)
+function mint(to, tokenId, metadata, ...)
   assert(isMinter(system.getSender(), "ARC2: only minter can mint")
   assert(not _max_supply:get() or (totalSupply() + 1) <= _max_supply:get(), "ARC2: totalSupply is over MaxSupply")
 
-  return _mint(to, tokenId, ...)
+  return _mint(to, tokenId, metadata, ...)
 end
 
 -- return Max Supply

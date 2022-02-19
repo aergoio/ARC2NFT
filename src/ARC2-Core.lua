@@ -100,7 +100,7 @@ end
 -- Count of all NFTs assigned to an owner
 -- @type    query
 -- @param   owner  (address) a target address
--- @return  (integer) the number of NFT tokens of owner
+-- @return  (integer) the number of non-fungible tokens of owner
 function balanceOf(owner)
   local list = _user_tokens[owner] or {}
   return #list
@@ -108,8 +108,8 @@ end
 
 -- Find the owner of an NFT
 -- @type    query
--- @param   tokenId (str128) the NFT id
--- @return  (address) the address of the owner of the NFT, or nil if token does not exist
+-- @param   tokenId  (str128) the non-fungible token id
+-- @return  (address) the address of the owner, or nil if the token does not exist
 function ownerOf(tokenId)
   local token = _tokens[tokenId]
   if token == nil then
@@ -142,7 +142,7 @@ local function remove_from_owner(index, owner)
 end
 
 
-local function _mint(to, tokenId, ...)
+local function _mint(to, tokenId, metadata, ...)
   _typecheck(to, 'address')
   _typecheck(tokenId, 'str128')
 
@@ -150,6 +150,7 @@ local function _mint(to, tokenId, ...)
   assert(not _blacklist[to], "ARC2: recipient is on blacklist")
 
   assert(not _exists(tokenId), "ARC2: mint - already minted token")
+  assert(metadata==nil or type(metadata)=="table", "ARC2: invalid metadata")
 
   local index = _last_index:get() + 1
   _last_index:set(index)
@@ -159,6 +160,13 @@ local function _mint(to, tokenId, ...)
     index = index,
     owner = to
   }
+  if metadata ~= nil then
+    assert(extensions["metadata"], "ARC2: this token has no support for metadata")
+    for key,value in pairs(metadata) do
+      assert(not is_reserved_metadata(key), "ARC2: reserved metadata")
+      token[key] = value
+    end
+  end
   _tokens[tokenId] = token
 
   add_to_owner(index, to)
@@ -213,7 +221,7 @@ end
 -- Transfer a token
 -- @type    call
 -- @param   to      (address) a receiver's address
--- @param   tokenId (str128) the NFT token to send
+-- @param   tokenId (str128) the non-fungible token to send
 -- @param   ...     (Optional) addtional data, MUST be sent unaltered in call to 'onARC2Received' on 'to'
 -- @event   transfer(from, to, tokenId)
 function transfer(to, tokenId, ...)
