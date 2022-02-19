@@ -15,6 +15,7 @@ process_file "Mintable" "%mintable%"
 process_file "Pausable" "%pausable%"
 process_file "Blacklist" "%blacklist%"
 process_file "Approval" "%approval%"
+process_file "Searchable" "%searchable%"
 process_file "NonTransferable" "%non_transferable%"
 process_file "Recallable" "%recallable%"
 

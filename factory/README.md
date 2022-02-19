@@ -18,6 +18,7 @@ The options is a table informing which extensions to add to the token:
 * pausable
 * blacklist
 * approval
+* searchable
 * non_transferable
 * recallable
 

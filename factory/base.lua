@@ -22,6 +22,10 @@ arc2_approval = [[
 %approval%
 ]]
 
+arc2_searchable = [[
+%searchable%
+]]
+
 arc2_non_transferable = [[
 %non_transferable%
 ]]
@@ -75,6 +79,9 @@ function new_arc2_nft(name, symbol, initial_supply, options, owner)
   end
   if options["approval"] then
     contract_code = contract_code .. arc2_approval
+  end
+  if options["searchable"] then
+    contract_code = contract_code .. arc2_searchable
   end
   if options["non_transferable"] then
     contract_code = contract_code .. arc2_non_transferable
