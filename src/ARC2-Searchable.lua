@@ -90,4 +90,4 @@ local function escape(str)
 end
 
 
-abi.register(findToken)
+abi.register_view(findToken)
