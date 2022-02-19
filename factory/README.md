@@ -15,9 +15,10 @@ The options is a table informing which extensions to add to the token:
 
 * burnable
 * mintable
+* metadata
+* approval
 * pausable
 * blacklist
-* approval
 * searchable
 * non_transferable
 * recallable

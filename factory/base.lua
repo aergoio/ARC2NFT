@@ -10,6 +10,10 @@ arc2_mintable = [[
 %mintable%
 ]]
 
+arc2_metadata = [[
+%metadata%
+]]
+
 arc2_pausable = [[
 %pausable%
 ]]
@@ -70,6 +74,9 @@ function new_arc2_nft(name, symbol, initial_supply, options, owner)
   end
   if options["mintable"] then
     contract_code = contract_code .. arc2_mintable
+  end
+  if options["metadata"] then
+    contract_code = contract_code .. arc2_metadata
   end
   if options["pausable"] then
     contract_code = contract_code .. arc2_pausable
