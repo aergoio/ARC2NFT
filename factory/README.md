@@ -30,7 +30,7 @@ we can specify any address.
 
 ## Creating from another contract
 
-The call uses this format:
+The call has this format:
 
 ```lua
 contract.call(arc2_factory, "new_arc2_nft", name, symbol, initial_supply, options)
@@ -41,13 +41,8 @@ The function returns the contract address.
 Here is an example with an initial supply of tokens:
 
 ```lua
-local initial_supply = {
-  "lkjhaosdiufyaodfuia01",
-  "lkjhaosdiufyaodfuia02",
-  "lkjhaosdiufyaodfuia03"
-}
 local token = contract.call(arc2_factory, "new_arc2_nft", name, symbol,
-                            initial_supply, {mintable=true,approval=true})
+                            initial_supply, {burnable=true,approval=true})
 ```
 
 And how to inform a total supply (for mintable tokens):
@@ -59,6 +54,28 @@ local token = contract.call(arc2_factory, "new_arc2_nft", name, symbol,
 
 If you do not specify `mintable` in the options, then the contract will only
 contain the tokens informed as the initial supply (fixed supply).
+
+The **initial supply** is informed as a list of tokens. The list can contain either:
+
+1. Only the token Ids:
+
+```lua
+local initial_supply = {
+  "lkjhaosdiufyaodfuia01",
+  "lkjhaosdiufyaodfuia02",
+  "lkjhaosdiufyaodfuia03"
+}
+```
+
+2. Token Ids and metadata:
+
+```lua
+local initial_supply = {
+  { "lkjhaosdiufyaodfuia01", {key1 = value1, key2 = value2} },
+  { "lkjhaosdiufyaodfuia02", {key1 = value1, key2 = value2} },
+  { "lkjhaosdiufyaodfuia03", {key1 = value1, key2 = value2} },
+}
+```
 
 The factory can also be called from herajs, herapy, libaergo...
 

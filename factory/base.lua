@@ -47,8 +47,8 @@ function constructor(name, symbol, initial_supply, max_supply, owner)
   _init(name, symbol)
   _creator:set(owner)
   if initial_supply then
-    for _,tokenId in ipairs(initial_supply) do
-      _mint(owner, tokenId)
+    for _,token in ipairs(initial_supply) do
+      _mint(owner, token[1], token[2])
     end
   end
   if max_supply then
@@ -95,6 +95,14 @@ function new_arc2_nft(name, symbol, initial_supply, options, owner)
   end
   if options["recallable"] then
     contract_code = contract_code .. arc2_recallable
+  end
+
+  if initial_supply then
+    for index,value in ipairs(initial_supply) do
+      if type(value) == "string" then
+        initial_supply[index] = {value}
+      end
+    end
   end
 
   local max_supply = options["max_supply"]
