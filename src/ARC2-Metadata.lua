@@ -59,6 +59,7 @@ function set_metadata(tokenId, metadata)
   assert(token ~= nil, "ARC2: nonexisting token")
   for key,value in pairs(metadata) do
     check_metadata_update(key, token[key], value)
+    assert(key ~= "non_transferable" and key ~= "recallable", "ARC2: permission denied")
     token[key] = value
   end
   _tokens[tokenId] = token

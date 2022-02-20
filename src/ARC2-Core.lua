@@ -231,7 +231,8 @@ function transfer(to, tokenId, ...)
   local token = _tokens[tokenId]
   assert(token ~= nil, "ARC2: transfer - nonexisting token")
 
-  assert(extensions["non_transferable"] == nil, "ARC2: this token is non-transferable")
+  assert(extensions["non_transferable"] == nil and
+              token["non_transferable"] == nil, "ARC2: this token is non-transferable")
 
   local sender = system.getSender()
   local owner = token["owner"]

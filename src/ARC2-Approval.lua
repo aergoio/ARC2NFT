@@ -114,14 +114,15 @@ function transferFrom(from, to, tokenId, ...)
   local operator = system.getSender()
 
   -- if recallable, the creator/issuer can transfer the token
-  local is_recall = extensions["recallable"] and operator == system.getCreator()
+  local is_recall = (extensions["recallable"] or token["recallable"]) and operator == system.getCreator()
 
   if not is_recall then
     -- check allowance
     assert(operator == token["approved"] or isApprovedForAll(owner, operator),
            "ARC2: transferFrom - caller is not approved")
     -- check if it is a non-transferable token
-    assert(extensions["non_transferable"] == nil, "ARC2: this token is non-transferable")
+    assert(extensions["non_transferable"] == nil and
+                token["non_transferable"] == nil, "ARC2: this token is non-transferable")
   end
 
   contract.event("transfer", from, to, tokenId, operator)
