@@ -197,8 +197,6 @@ local function _transfer(from, to, tokenId, ...)
   assert(not _blacklist[from], "ARC2: sender is on blacklist")
   assert(not _blacklist[to], "ARC2: recipient is on blacklist")
 
-  assert(extensions["non_transferable"] == nil, "ARC2: this token is non-transferable")
-
   local token = _tokens[tokenId]
   token["owner"] = to
   table.remove(token, "approved")  -- clear approval
@@ -222,15 +220,18 @@ function transfer(to, tokenId, ...)
   _typecheck(to, 'address')
   _typecheck(tokenId, 'str128')
 
-  local from = system.getSender()
+  local token = _tokens[tokenId]
+  assert(token ~= nil, "ARC2: transfer - nonexisting token")
 
-  local owner = ownerOf(tokenId)
-  assert(owner ~= nil, "ARC2: transfer - nonexisting token")
-  assert(from == owner, "ARC2: transfer of token that is not own")
+  assert(extensions["non_transferable"] == nil, "ARC2: this token is non-transferable")
 
-  contract.event("transfer", from, to, tokenId, nil)
+  local sender = system.getSender()
+  local owner = token["owner"]
+  assert(sender == owner, "ARC2: transfer of token that is not own")
 
-  return _transfer(from, to, tokenId, ...)
+  contract.event("transfer", sender, to, tokenId, nil)
+
+  return _transfer(sender, to, tokenId, ...)
 end
 
 

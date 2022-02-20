@@ -105,12 +105,24 @@ function transferFrom(from, to, tokenId, ...)
   _typecheck(to, 'address')
   _typecheck(tokenId, 'str128')
 
-  local owner = ownerOf(tokenId)
-  assert(owner ~= nil, "ARC2: transferFrom - nonexisting token")
-  assert(from == owner, "ARC2: transferFrom - transfer of token that is not own")
+  local token = _tokens[tokenId]
+  assert(token ~= nil, "ARC2: transferFrom - nonexisting token")
+
+  local owner = token["owner"]
+  assert(from == owner, "ARC2: transferFrom - token is not from account")
 
   local operator = system.getSender()
-  assert(operator == owner or getApproved(tokenId) == operator or isApprovedForAll(owner, operator), "ARC2: transferFrom - caller is not owner nor approved")
+
+  -- if recallable, the creator/issuer can transfer the token
+  local is_recall = extensions["recallable"] and operator == system.getCreator()
+
+  if not is_recall then
+    -- check allowance
+    assert(operator == token["approved"] or isApprovedForAll(owner, operator),
+           "ARC2: transferFrom - caller is not approved")
+    -- check if it is a non-transferable token
+    assert(extensions["non_transferable"] == nil, "ARC2: this token is non-transferable")
+  end
 
   contract.event("transfer", from, to, tokenId, operator)
 

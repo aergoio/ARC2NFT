@@ -19,6 +19,7 @@ The options is a table informing which extensions to add to the token:
 * blacklist
 * approval
 * non_transferable
+* recallable
 
 The `owner` is the address that will be registered as the owner of the
 token contract. By default it is the entity calling the factory, but

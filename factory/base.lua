@@ -26,6 +26,10 @@ arc2_non_transferable = [[
 %non_transferable%
 ]]
 
+arc2_recallable = [[
+%recallable%
+]]
+
 arc2_constructor = [[
 state.var {
   _creator = state.value()
@@ -74,6 +78,9 @@ function new_arc2_nft(name, symbol, initial_supply, options, owner)
   end
   if options["non_transferable"] then
     contract_code = contract_code .. arc2_non_transferable
+  end
+  if options["recallable"] then
+    contract_code = contract_code .. arc2_recallable
   end
 
   local max_supply = options["max_supply"]
