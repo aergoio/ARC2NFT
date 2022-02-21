@@ -28,7 +28,7 @@ When creating a token, the token issuer can store data in 2 places:
 * Token Id
 * Metadata
 
-## Token Id
+### Token Id
 
 The **Token Id** is a string of up to 128 bytes. It must be unique for each token.
 Whenever a new token is created the contract will check if another token with the same
@@ -36,7 +36,7 @@ id already exists.
 
 The data stored in the token id is **immutable**.
 
-## Metadata
+### Metadata
 
 The **Metadata** is the data stored attached to the token id, in the format of key/value pairs.
 The token issuer can set the metadata either at mint time or later, using the `set_metadata`
@@ -285,13 +285,6 @@ function ownerOf(tokenId) end
 function transfer(to, tokenId, ...) end
 ```
 
-### NonTransferable extension
-
-There are no exported functions
-
-It is used to make non-transferable tokens (badges)
-
-
 ### Burnable extension
 
 ``` lua
@@ -441,6 +434,30 @@ function removeFromBlacklist(account_list)
 -- @param   account   (address)
 function isOnBlacklist(account)
 ```
+
+### NonTransferable extension
+
+There are no exported functions
+
+It is used to make non-transferable tokens (badges)
+
+
+### Recallable extension
+
+There are no exported functions
+
+It is used to make recallable tokens
+
+
+### Searchable extension
+
+It is used to search for tokens using REGEX pattern.
+
+```lua
+function findToken(query, prev_index)
+```
+
+Check instructions bellow for examples.
 
 
 ### Hook
