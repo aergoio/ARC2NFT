@@ -61,9 +61,9 @@ The **initial supply** is informed as a list of tokens. The list can contain eit
 
 ```lua
 local initial_supply = {
-  "lkjhaosdiufyaodfuia01",
-  "lkjhaosdiufyaodfuia02",
-  "lkjhaosdiufyaodfuia03"
+  "Josh_Concert,1645379800,Clark_Stadium,D01",
+  "Josh_Concert,1645379800,Clark_Stadium,D02",
+  "Josh_Concert,1645379800,Clark_Stadium,D03"
 }
 ```
 
@@ -71,13 +71,14 @@ local initial_supply = {
 
 ```lua
 local initial_supply = {
-  { "lkjhaosdiufyaodfuia01", {key1 = value1, key2 = value2} },
-  { "lkjhaosdiufyaodfuia02", {key1 = value1, key2 = value2} },
-  { "lkjhaosdiufyaodfuia03", {key1 = value1, key2 = value2} },
+  { "Josh_Concert,1645379800,Clark_Stadium,D01", {key1 = value1, key2 = value2} },
+  { "Josh_Concert,1645379800,Clark_Stadium,D02", {key1 = value1, key2 = value2} },
+  { "Josh_Concert,1645379800,Clark_Stadium,D03", {key1 = value1, key2 = value2} },
 }
 ```
 
-The factory can also be called from herajs, herapy, libaergo...
+The factory can also be called from herajs, herapy, heraj, heraphp, libaergo and
+any other language using GRPC. Even from IoT devices.
 
 
 ## Token Factory Address

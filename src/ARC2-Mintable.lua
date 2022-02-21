@@ -80,7 +80,7 @@ end
 -- @type    call
 -- @param   to       (address) recipient's address
 -- @param   tokenId  (str128) the non-fungible token id
--- @param   metadata (table) lua table containing key/value pairs
+-- @param   metadata (table) lua table containing key-value pairs
 -- @param   ...      additional data, is sent unaltered in call to 'tokensReceived' on 'to'
 -- @return  value returned from 'tokensReceived' callback, or nil
 -- @event   mint(to, tokenId)

@@ -6,7 +6,9 @@ Although NFTs are mostly known to record image ownership, they can be used for m
 * Access control
 * Identity Verification (including birth certificates and KYC)
 * Documents (including certificates and licenses)
-* Academic Credentials
+* Academic and Professional Credentials
+* Attendance/Participation Credentials
+* Awards
 * Medical Records
 * Voting and DAOs
 * Intellectual Property and Patents
@@ -216,6 +218,9 @@ On the first case, all tokens on the contract are non-transferable.
 
 On the second case, the contract can have both transferable and non-transferable tokens.
 
+The `non_transferable` metadata can only be set at token creation/mint time, but it can
+be removed later.
+
 
 ## Recallable Tokens
 
@@ -229,6 +234,9 @@ There are 2 ways in which a token can be recallable:
 On the first case, all tokens on the contract are recallable.
 
 On the second case, the contract can have both recallable and non-recallable tokens.
+
+The `recallable` metadata can only be set at token creation/mint time, but it can
+be removed later.
 
 
 ## Behavior Table
@@ -285,6 +293,11 @@ function ownerOf(tokenId) end
 -- @param   ...     (Optional) addtional data, MUST be sent unaltered in call to 'onARC2Received' on 'to'
 -- @event   transfer(from, to, tokenId)
 function transfer(to, tokenId, ...) end
+
+-- Returns a JSON string containing the list of ARC2 extensions
+-- that were included on the contract.
+-- @type    query
+function arc2_extensions() end
 ```
 
 ### Metadata extension
@@ -363,10 +376,11 @@ function renounceMinter()
 -- @type    call
 -- @param   to       (address) recipient's address
 -- @param   tokenId  (str128) the NFT id
+-- @param   metadata (table) lua table containing key-value pairs
 -- @param   ...      additional data, is sent unaltered in call to 'tokensReceived' on 'to'
 -- @return  value returned from 'tokensReceived' callback, or nil
 -- @event   mint(to, tokenId)
-function mint(to, tokenId, ...)
+function mint(to, tokenId, metadata, ...)
 
 -- return Max Supply
 -- @type    query

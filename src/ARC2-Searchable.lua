@@ -74,11 +74,46 @@ local function token_matches(tokenId, query)
     return false
   end
 
+  local token = _tokens[tokenId]
+
   local pattern = query["pattern"]
+  local metadata = query["metadata"]
 
   if pattern then
     if not tokenId:match(pattern) then
       return false
+    end
+  end
+
+  if metadata then
+    for key,find in pairs(metadata) do
+      local op = find["op"]
+      local value = find["value"]
+      local neg = false
+      local matches = false
+      if string.sub(op,1,1) == "!" then
+        neg = true
+        op = string.sub(op, 2)
+      end
+      if op == ">" then
+        matches = token[key] > value
+      elseif op == ">=" then
+        matches = token[key] >= value
+      elseif op == "<" then
+        matches = token[key] < value
+      elseif op == "<=" then
+        matches = token[key] <= value
+      elseif op == "=" then
+        matches = token[key] == value
+      elseif op == "between" then
+        matches = (token[key] >= value and token[key] <= find["value2"])
+      elseif op == "regex" then
+        matches = string.match(token[key], value)
+      else
+        assert(false, "operator not known: " .. op)
+      end
+      if neg then matches = not matches
+      if not matches then return false end
     end
   end
 

@@ -281,8 +281,9 @@ function tokenFromUser(user, position)
 end
 
 
--- returns a JSON string containing the list of ARC2 extensions
--- that were included on the contract
+-- Returns a JSON string containing the list of ARC2 extensions
+-- that were included on the contract.
+-- @type    query
 function arc2_extensions()
   local list = {}
   for name,_ in pairs(extensions) do

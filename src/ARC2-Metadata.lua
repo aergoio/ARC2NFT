@@ -48,7 +48,7 @@ end
 -- Store non-fungible token metadata
 -- @type    call
 -- @param   tokenId  (str128) the non-fungible token id
--- @param   metadata (table)  lua table containing key/value pairs
+-- @param   metadata (table)  lua table containing key-value pairs
 function set_metadata(tokenId, metadata)
   _typecheck(tokenId, 'str128')
 
