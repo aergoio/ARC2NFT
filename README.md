@@ -31,6 +31,7 @@ When creating a token, the token issuer can store data in 2 places:
 ### Token Id
 
 The **Token Id** is a string of up to 128 bytes. It must be unique for each token.
+
 Whenever a new token is created the contract will check if another token with the same
 id already exists.
 
@@ -38,7 +39,8 @@ The data stored in the token id is **immutable**.
 
 ### Metadata
 
-The **Metadata** is the data stored attached to the token id, in the format of key/value pairs.
+The **Metadata** is the data stored attached to the token id, in the format of key-value pairs.
+
 The token issuer can set the metadata either at mint time or later, using the `set_metadata`
 function.
 
@@ -48,10 +50,9 @@ The metadata can be either **mutable**, **immutable** or **incremental**.
 
 The token creator can mark a specific metadata key as immutable using the
 `make_metadata_immutable` function. This is done just once for each unique key.
+After this property is set for a metadata key, it cannot be removed.
 
-If the metadata is immutable, it means that once it
-is set on a token, it can no longer be modified. And once this property is set
-on a metadata, it cannot be removed.
+If the metadata is immutable, it means that once it is set on a token it can no longer be modified.
 
 It gives the guarantee to the owner that the creator/issuer will not modify or
 remove this specific metadata.
@@ -60,10 +61,9 @@ remove this specific metadata.
 
 The token creator can mark a specific metadata key as incremental using the
 `make_metadata_incremental` function. This is done just once for each unique key.
+After this property is set for a metadata key, it cannot be removed.
 
-If the metadata is incremental, it means that once it
-is set on a token, it can only be incremented.
-And once this property is set on a metadata, it cannot be removed.
+If the metadata is incremental, it means that once it is set on a token it can only be incremented.
 
 It gives the guarantee to the owner that the creator/issuer can only increment this value.
 Useful for expiration time, for example.
@@ -73,7 +73,7 @@ Useful for expiration time, for example.
 Any metadata key that is not marked as immutable or incremental is mutable.
 
 The token issuer can modify the metadata by either updating the value or removing the
-whole key/value pair.
+whole key-value pair from the token.
 
 This is done using the `set_metadata` and `remove_metadata` functions.
 
@@ -82,8 +82,8 @@ This is done using the `set_metadata` and `remove_metadata` functions.
 
 Mutable data must be stored as metadata.
 
-Immutable data can either be in either places. Store it in the token id if the
-data is used to uniquely identify the token. Otherwise it can be as metadata.
+Immutable data can be in either places. Store it in the token id if the
+data is used to uniquely identify the token. Otherwise it can be stored as metadata.
 
 Example:
 
@@ -91,7 +91,7 @@ For tickets we can store the event name, location, date, and seat number in the
 token id. By using the same format of storing this data we can check if the ticket
 is already issued, retrieve the owner, etc.
 
-The data can be arranged in a key/value format, like this:
+The data in the token id can be arranged in a key-value format, like this:
 
 ```
 event=Josh_Concert,date=1645379800,place=Clark_Stadium,section=green,seat=15D,team=away
@@ -126,10 +126,12 @@ blockchain and then store the identifier in the token id.
 For real-state, you can store the property identifier on the token and the remaining,
 like documents, on a descentralized storage or private database.
 
+Similar for Academic Credentials, Documents, Patents, Designs...
+
 
 ## Creating Tokens
 
-The tokens can be created at contract creation and also later, if the
+The tokens can be created at contract creation time and also later, if the
 contract includes the `mintable` extension.
 
 ### Initial Supply
@@ -179,7 +181,7 @@ Example transaction:
 }
 ```
 
-It is also possible to allow another accounts to mint tokens, using the `addMinter`
+It is also possible to allow other accounts to mint tokens, using the `addMinter`
 function. For more info, check the [mintable extension](#mintable-extension).
 
 
@@ -217,7 +219,7 @@ On the second case, the contract can have both transferable and non-transferable
 
 ## Recallable Tokens
 
-When a token is recallable, it can be transferred by the token creator.
+When a token is recallable, it can be transferred (seized) by the token creator.
 
 There are 2 ways in which a token can be recallable:
 
@@ -233,7 +235,7 @@ On the second case, the contract can have both recallable and non-recallable tok
 
 | Non-Transferable   | Recallable | Behavior
 | :----------------: | :--------: | ---------------------------------------------
-|                    |                    | Only the owner can transfer (or authorized ones)
+|                    |                    | Only the owner (and authorized accounts) can transfer
 | :white_check_mark: |                    | No one can transfer it
 |                    | :white_check_mark: | The owner, authorized, and creator/issuer can transfer
 | :white_check_mark: | :white_check_mark: | Only the creator/issuer can transfer
@@ -285,10 +287,50 @@ function ownerOf(tokenId) end
 function transfer(to, tokenId, ...) end
 ```
 
-### Burnable extension
+### Metadata extension
 
 ``` lua
-function burn(tokenId) end
+-- Store non-fungible token metadata
+-- @type    call
+-- @param   tokenId  (str128) the non-fungible token id
+-- @param   metadata (table)  lua table containing key-value pairs
+function set_metadata(tokenId, metadata)
+
+-- Remove non-fungible token metadata
+-- @type    call
+-- @param   tokenId  (str128) the non-fungible token id
+-- @param   list     (table)  lua table containing list of keys to remove
+function remove_metadata(tokenId, list)
+
+-- Retrieve non-fungible token metadata
+-- @type    query
+-- @param   tokenId  (str128) the non-fungible token id
+-- @param   key      (string) the metadata key
+-- @return  (string) if key is nil, return all metadata from token,
+--                   otherwise return the value linked to the key
+function get_metadata(tokenId, key)
+
+-- Mark a specific metadata key as immutable. This means that once this metadata
+-- is set on a token, it can no longer be modified. And once this property is set
+-- on a metadata, it cannot be removed. It gives the guarantee to the owner that
+-- the creator/issuer will not modify or remove this specific metadata.
+-- @type    call
+-- @param   key  (string) the metadata key
+function make_metadata_immutable(key)
+
+-- Mark a specific metadata key as incremental. This means that once this metadata
+-- is set on a token, it can only be incremented. Useful for expiration time.
+-- Once this property is set on a metadata, it cannot be removed. It gives the
+-- guarantee to the owner that the creator/issuer can only increment this value.
+-- @type    call
+-- @param   key  (string) the metadata key
+function make_metadata_incremental(key)
+
+-- Retrieve the list of immutable and incremental metadata
+-- @type    query
+-- @return  (string) a JSON object with each metadata as key and the property
+--                   as value. Example: {"expiration": "incremental", "index": "immutable"}
+function get_metadata_info()
 ```
 
 ### Mintable extension
@@ -330,6 +372,12 @@ function mint(to, tokenId, ...)
 -- @type    query
 -- @return  amount   (integer) amount of tokens to mint
 function maxSupply()
+```
+
+### Burnable extension
+
+``` lua
+function burn(tokenId) end
 ```
 
 ### Approval extension
@@ -457,7 +505,7 @@ It is used to search for tokens using REGEX pattern.
 function findToken(query, prev_index)
 ```
 
-Check instructions bellow for examples.
+Check instructions bellow for usage and examples
 
 
 ### Hook
