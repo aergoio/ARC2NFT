@@ -563,6 +563,16 @@ The query is a lua table that can contain these fields:
 * **owner**    - the owner of the token (address)
 * **contains** - check if the tokenId contains this string
 * **pattern**  - check if the tokenId matches this Lua regex pattern
+* **metadata** - check if the token metadata matches this sub-query
+
+The sub-query is a lua table containing the metadata key, the operator
+to use and the value, in this format:
+
+```lua
+metadata = { key = {op = ">", value = 10} }
+```
+
+The operators are: `= > >= < <= between regex` and negated: `!= !between !regex`
 
 The `prev_index` must be `0` in the first call.
 For the next calls, just inform the returned index from the previous call.
@@ -632,6 +642,20 @@ List the tokens from an user that match a specific regex pattern:
   local tokenId
   do
     index, tokenId = findToken({owner=address,pattern=text}, index)
+    if tokenId then
+      ...
+    end
+  while index > 0
+```
+
+List the tokens from an user that have not expired yet:
+
+```lua
+  local query = {owner=address, metadata={expiration = {op=">", value=1645379800}}}
+  local index = 0
+  local tokenId
+  do
+    index, tokenId = findToken(query, index)
     if tokenId then
       ...
     end
