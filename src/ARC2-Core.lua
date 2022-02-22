@@ -207,7 +207,7 @@ local function _transfer(from, to, tokenId, ...)
 
   local token = _tokens[tokenId]
   token["owner"] = to
-  table.remove(token, "approved")  -- clear approval
+  token["approved"] = nil   -- clear approval
   _tokens[tokenId] = token
 
   local index = token["index"]
