@@ -254,14 +254,10 @@ function nextToken(prev_index)
   local last_index = _last_index:get()
   local tokenId
 
-  if index >= last_index then
-    return nil, nil
-  end
-
-  do
+  while tokenId == nil and index < last_index do
     index = index + 1
     tokenId = _ids[tostring(index)]
-  while tokenId == nil and index < last_index
+  end
 
   if tokenId == nil then
     index = nil

@@ -99,11 +99,9 @@ function get_metadata(tokenId, key)
   local token = _tokens[tokenId]
   assert(token ~= nil, "ARC2: nonexisting token")
 
---[[
-  token["index"] = nil
-  token["owner"] = nil
-  token["approved"] = nil
-]]
+  -- token["index"] = nil
+  -- token["owner"] = nil
+  -- token["approved"] = nil
 
   if key == nil then
     return token  -- or JSON
@@ -161,13 +159,7 @@ end
 -- Retrieve the list of immutable and incremental metadata
 -- @type    query
 -- @return  (string) a JSON object with each metadata as key and the property
---                   as value. Example:
---[[
-{
-"expiration": "incremental",
-"index": "immutable"
-}
-]]
+--                   as value. Example: {"expiration": "incremental", "index": "immutable"}
 function get_metadata_info()
   local immutable = _immutable_metadata:get() or {}
   local incremental = _incremental_metadata:get() or {}

@@ -48,17 +48,13 @@ function findToken(query, prev_index)
     local last_index = _last_index:get()
     index = prev_index
 
-    if index >= last_index then
-      return nil, nil
-    end
-
-    do
+    while tokenId == nil and index < last_index do
       index = index + 1
       tokenId = _ids[tostring(index)]
       if not token_matches(tokenId, query) then
         tokenId = nil
       end
-    while tokenId == nil and index < last_index
+    end
   end
 
   if tokenId == nil then
@@ -112,7 +108,7 @@ local function token_matches(tokenId, query)
       else
         assert(false, "operator not known: " .. op)
       end
-      if neg then matches = not matches
+      if neg then matches = not matches end
       if not matches then return false end
     end
   end
