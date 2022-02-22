@@ -11,7 +11,7 @@ state.var {
 
 reserved_metadata = { "index", "owner", "approved" }
 
-local function is_reserved_metadata(name)
+function is_reserved_metadata(name)
   for _,reserved in ipairs(reserved_metadata) do
     if name == reserved then
       return true
