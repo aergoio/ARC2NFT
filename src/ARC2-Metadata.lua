@@ -93,9 +93,6 @@ end
 function get_metadata(tokenId, key)
   _typecheck(tokenId, 'str128')
 
-  assert(system.getSender() == system.getCreator(), "ARC2: permission denied")
-  assert(not _paused:get(), "ARC2: paused contract")
-
   local token = _tokens[tokenId]
   assert(token ~= nil, "ARC2: nonexisting token")
 
