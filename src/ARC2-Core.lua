@@ -243,9 +243,46 @@ function transfer(to, tokenId, ...)
   return _transfer(sender, to, tokenId, ...)
 end
 
+-- Transfer a token of 'from' to 'to'
+-- @type    call
+-- @param   from    (address) a sender's address
+-- @param   to      (address) a receiver's address
+-- @param   tokenId (str128) the NFT token to send
+-- @param   ...     (Optional) addtional data, MUST be sent unaltered in call to 'onARC2Received' on 'to'
+-- @event   transfer(from, to, tokenId)
+function transferFrom(from, to, tokenId, ...)
+  _typecheck(from, 'address')
+  _typecheck(to, 'address')
+  _typecheck(tokenId, 'str128')
+
+  local token = _tokens[tokenId]
+  assert(token ~= nil, "ARC2: transferFrom - nonexisting token")
+
+  local owner = token["owner"]
+  assert(from == owner, "ARC2: transferFrom - token is not from account")
+
+  local operator = system.getSender()
+
+  -- if recallable, the creator/issuer can transfer the token
+  local is_recall = (extensions["recallable"] or token["recallable"]) and operator == system.getCreator()
+
+  if not is_recall then
+    assert(extensions["approval"], "ARC2: approval extension not included")
+    -- check allowance
+    assert(operator == token["approved"] or isApprovedForAll(owner, operator),
+           "ARC2: transferFrom - caller is not approved")
+    -- check if it is a non-transferable token
+    assert(extensions["non_transferable"] == nil and
+                token["non_transferable"] == nil, "ARC2: this token is non-transferable")
+  end
+
+  contract.event("transfer", from, to, tokenId, operator)
+
+  return _transfer(from, to, tokenId, ...)
+end
 
 
--- Token List Functions --
+-- Token Enumeration Functions --
 
 function nextToken(prev_index)
   _typecheck(prev_index, 'uint')
@@ -289,5 +326,5 @@ function arc2_extensions()
 end
 
 
-abi.register(transfer, arc2_extensions)
+abi.register(transfer, transferFrom, arc2_extensions)
 abi.register_view(name, symbol, balanceOf, ownerOf, totalSupply, nextToken, tokenFromUser)
