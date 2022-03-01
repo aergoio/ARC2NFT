@@ -1,0 +1,114 @@
+inject ac1 10000000
+inject ac2 10000000
+inject ac3 10000000
+
+# ac1 = AmgMPiyZYr19kQ1kHFNiGenez1CRTBqNWqppj6gGZGEP6qszDGe1
+# ac2 = AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2
+# ac3 = Amh472hZcaLquvL4ZWoyVEYAoH3ZLAtMR2sw8xy9FnNBwhwF6Ktd
+
+deploy ac1 0 factory ../factory/output.lua
+
+call ac1 0 factory new_arc2_nft `["","",null,{"metadata": true, "mintable": true, "searchable":true}]`
+# query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH arc2_extensions `[]` `["metadata","mintable","searchable"]`
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH totalSupply `[]` `0`
+
+# only minter can mint
+call ac2 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH mint `["AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2","1122",{"haha":123}]` `ARC2: only minter can mint`
+call ac3 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH mint `["AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2","1122",{"haha":123}]` `ARC2: only minter can mint`
+
+# mint a token with metadata
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH mint `["AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2","1122",{"haha":123}]`
+
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH totalSupply `[]` `1`
+
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH nextToken `[0]` `[1,"1122"]`
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH nextToken `[1]` `[null,null]`
+
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH tokenFromUser `["AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2",1]` `"1122"`
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH tokenFromUser `["AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2",2]` `null`
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH tokenFromUser `["AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2",0]` `null`
+
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH get_metadata `["1122"]`
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH make_metadata_immutable `["fixed"]`
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH set_metadata `["1122",{"haha":125}]`
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH get_metadata `["1122"]`
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH set_metadata `["1122",{"test":100}]`
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH get_metadata `["1122"]`
+
+# mint a non_transferable token
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH mint `["AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2","1133",{"haha":123,"fixed":100,"non_transferable":true}]`
+
+# check metadata
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH get_metadata `["1133"]` `{"fixed":100,"haha":123,"index":2,"non_transferable":true,"owner":"AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2"}`
+
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH nextToken `[0]` `[1,"1122"]`
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH nextToken `[1]` `[2,"1133"]`
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH nextToken `[2]` `[null,null]`
+
+# transfer by owner - should fail (non_transferable)
+call ac2 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH transfer `["Amh472hZcaLquvL4ZWoyVEYAoH3ZLAtMR2sw8xy9FnNBwhwF6Ktd","1133"]` `ARC2: this token is non-transferable`
+# contract creator - should fail
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH transfer `["Amh472hZcaLquvL4ZWoyVEYAoH3ZLAtMR2sw8xy9FnNBwhwF6Ktd","1133"]` `ARC2: this token is non-transferable`
+# transfer by third account - should fail
+call ac3 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH transfer `["Amh472hZcaLquvL4ZWoyVEYAoH3ZLAtMR2sw8xy9FnNBwhwF6Ktd","1133"]` `ARC2: this token is non-transferable`
+
+
+# mint a recallable token
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH mint `["AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2","1144",{"haha":123,"fixed":100,"recallable":true}]`
+# check metadata
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH get_metadata `["1144"]` `{"fixed":100,"haha":123,"index":3,"owner":"AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2","recallable":true}`
+
+# transfer by third account - should fail
+call ac3 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH transfer `["Amh472hZcaLquvL4ZWoyVEYAoH3ZLAtMR2sw8xy9FnNBwhwF6Ktd","1144"]` `ARC2: transfer of token that is not own`
+# contract creator - should fail (recallable but using transfer)
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH transfer `["Amh472hZcaLquvL4ZWoyVEYAoH3ZLAtMR2sw8xy9FnNBwhwF6Ktd","1144"]` `ARC2: transfer of token that is not own`
+# contract creator - should work (recallable using transferFrom)
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH transferFrom `["AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2","Amh472hZcaLquvL4ZWoyVEYAoH3ZLAtMR2sw8xy9FnNBwhwF6Ktd","1144"]`
+# transfer by previous owner - should fail (no more own)
+call ac2 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH transfer `["Amh472hZcaLquvL4ZWoyVEYAoH3ZLAtMR2sw8xy9FnNBwhwF6Ktd","1144"]` `ARC2: transfer of token that is not own`
+# transfer by another user - should fail (approval extension not included)
+call ac2 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH transferFrom `["Amh472hZcaLquvL4ZWoyVEYAoH3ZLAtMR2sw8xy9FnNBwhwF6Ktd","AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2","1144"]` `ARC2: approval extension not included`
+# transfer by owner - should work
+call ac3 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH transfer `["AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2","1144"]`
+
+
+# mint a recallable non-transferable token
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH mint `["AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2","1155",{"haha":123,"fixed":100,"non_transferable":true,"recallable":true}]`
+# check metadata
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH get_metadata `["1155"]` `{"fixed":100,"haha":123,"index":4,"non_transferable":true,"owner":"AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2","recallable":true}`
+
+# transfer by third account - should fail
+call ac3 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH transfer `["Amh472hZcaLquvL4ZWoyVEYAoH3ZLAtMR2sw8xy9FnNBwhwF6Ktd","1155"]` `ARC2: this token is non-transferable`
+# transfer by owner - should fail (non_transferable)
+call ac2 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH transfer `["Amh472hZcaLquvL4ZWoyVEYAoH3ZLAtMR2sw8xy9FnNBwhwF6Ktd","1155"]` `ARC2: this token is non-transferable`
+# transferFrom by third account - should fail
+call ac3 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH transferFrom `["AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2","Amh472hZcaLquvL4ZWoyVEYAoH3ZLAtMR2sw8xy9FnNBwhwF6Ktd","1155"]` `ARC2: approval extension not included`
+# transferFrom by owner - should fail
+call ac2 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH transferFrom `["AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2","Amh472hZcaLquvL4ZWoyVEYAoH3ZLAtMR2sw8xy9FnNBwhwF6Ktd","1155"]` `ARC2: approval extension not included`
+# contract creator - should fail (recallable but using transfer)
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH transfer `["Amh472hZcaLquvL4ZWoyVEYAoH3ZLAtMR2sw8xy9FnNBwhwF6Ktd","1155"]` `ARC2: this token is non-transferable`
+# contract creator - should work (recallable using transferFrom)
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH transferFrom `["AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2","Amh472hZcaLquvL4ZWoyVEYAoH3ZLAtMR2sw8xy9FnNBwhwF6Ktd","1155"]`
+
+# burn by third account - should fail
+call ac3 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH burn `["1155"]` `not found function: burn`
+# burn by owner - should fail (non_transferable)
+call ac2 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH burn `["1155"]` `not found function: burn`
+
+
+
+# call ac1 0 factory new_arc2_nft `["","",null,{"metadata": true, "mintable": true, "searchable":true, "non_transferable":true}]`
+# call ac1 0 factory new_arc2_nft `["","",null,{"metadata": true, "mintable": true, "searchable":true, "recallable":true}]`
+# call ac1 0 factory new_arc2_nft `["","",null,{"metadata": true, "mintable": true, "searchable":true, "non_transferable":true, "recallable":true}]`
+
+
+
+# burnable
+
+# mintable - max-supply
+
+# no mintable (only iniital supply)
+
+# metadata
+
+# enumerable and searchable
