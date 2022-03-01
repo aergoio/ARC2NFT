@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo >> output.lua
+echo > output.lua
 
 process_file() {
   cat ../src/ARC2-$1.lua >> output.lua
