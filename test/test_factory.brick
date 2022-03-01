@@ -105,6 +105,26 @@ call ac2 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH burn `["1155"]` 
 
 # burnable
 
+# contract = AmgNnnCxGRjDjRgmfCWbB4uxL1nAihQX79yNJJqxcA9d75NLPWmj
+call ac1 0 factory new_arc2_nft `["","",null,{"metadata": true, "mintable": true, "burnable": true, "searchable": true}]`
+
+call ac1 0 AmgNnnCxGRjDjRgmfCWbB4uxL1nAihQX79yNJJqxcA9d75NLPWmj mint `["AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2","first"]`
+
+query AmgNnnCxGRjDjRgmfCWbB4uxL1nAihQX79yNJJqxcA9d75NLPWmj totalSupply `[]` 1
+query AmgNnnCxGRjDjRgmfCWbB4uxL1nAihQX79yNJJqxcA9d75NLPWmj balanceOf `["AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2"]` 1
+query AmgNnnCxGRjDjRgmfCWbB4uxL1nAihQX79yNJJqxcA9d75NLPWmj ownerOf `["first"]` "AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2"
+
+call ac1 0 AmgNnnCxGRjDjRgmfCWbB4uxL1nAihQX79yNJJqxcA9d75NLPWmj burn `["first"]` `ARC2: cannot burn a token that is not own`
+call ac2 0 AmgNnnCxGRjDjRgmfCWbB4uxL1nAihQX79yNJJqxcA9d75NLPWmj burn `["first"]`
+
+query AmgNnnCxGRjDjRgmfCWbB4uxL1nAihQX79yNJJqxcA9d75NLPWmj totalSupply `[]` 0
+query AmgNnnCxGRjDjRgmfCWbB4uxL1nAihQX79yNJJqxcA9d75NLPWmj balanceOf `["AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2"]` 0
+query AmgNnnCxGRjDjRgmfCWbB4uxL1nAihQX79yNJJqxcA9d75NLPWmj ownerOf `["first"]` null
+# query AmgNnnCxGRjDjRgmfCWbB4uxL1nAihQX79yNJJqxcA9d75NLPWmj get_metadata `["first"]` `null` `ARC2: nonexisting token`
+
+
+
+
 # mintable - max-supply
 
 # no mintable (only iniital supply)

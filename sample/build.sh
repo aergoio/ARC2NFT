@@ -7,10 +7,12 @@ process_file() {
 }
 
 process_file "Core"
-process_file "Burnable"
 process_file "Mintable"
+process_file "Burnable"
+process_file "Approval"
+process_file "Metadata"
+process_file "Searchable"
 process_file "Pausable"
 process_file "Blacklist"
-process_file "Approval"
 
 cat mintable_arc2.lua >> output.lua
