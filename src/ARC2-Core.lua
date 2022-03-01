@@ -67,7 +67,7 @@ local function _init(name, symbol)
 end
 
 local function _callOnARC2Received(from, to, tokenId, ...)
-  if system.isContract(to) then
+  if to ~= address0 and system.isContract(to) then
     contract.call(to, "onARC2Received", system.getSender(), from, tokenId, ...)
   end
 end
