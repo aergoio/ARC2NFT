@@ -34,7 +34,6 @@ local function check_metadata_update(name, prev_value, new_value)
   end
   for _,value in ipairs(incremental) do
     if value == name then
-      if prev_value == nil then return end
       assert(new_value ~= nil and type(new_value) == type(prev_value) and
              new_value >= prev_value, "ARC2: incremental metadata")
       break
@@ -101,7 +100,7 @@ function get_metadata(tokenId, key)
   -- token["approved"] = nil
 
   if key == nil then
-    return token  -- or JSON
+    return token
   end
 
   return token[key]
@@ -172,7 +171,7 @@ function get_metadata_info()
     list[value] = "incremental"
   end
 
-  return json.encode(list)
+  return list
 end
 
 
