@@ -40,6 +40,7 @@ end
 -- Indicate if an account is on the blacklist
 -- @type    query
 -- @param   account   (address)
+-- @return  (bool) true/false
 
 function isOnBlacklist(account)
   _typecheck(account, 'address')

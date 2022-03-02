@@ -44,6 +44,10 @@ call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH make_metadata_in
 call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH make_metadata_incremental `["approved"]` `ARC2: reserved metadata`
 call ac2 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH make_metadata_incremental `["test"]` `ARC2: permission denied`
 
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH set_metadata `["1122",{"index":10}]` `ARC2: reserved metadata`
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH set_metadata `["1122",{"owner":123}]` `ARC2: reserved metadata`
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH set_metadata `["1122",{"approved":"test"}]` `ARC2: reserved metadata`
+
 call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH make_metadata_immutable `["fixed"]`
 call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH make_metadata_incremental `["expiration"]`
 query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH get_metadata_info `[]` `{"expiration":"incremental","fixed":"immutable","index":"immutable"}`
