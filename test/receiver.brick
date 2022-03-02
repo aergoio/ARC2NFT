@@ -2,7 +2,7 @@
 batch ./init.brick
 
 # deploy sample arc2 receiver contract and set arc2 contract id
-deploy contractOwner 0 receiverContract ../sample/arc2_receiver.lua `["AmgcK7ArJUGw8qsKAJvk9F1ZEP5uvD1hkVMmSrP6u4ZHUNocY1st"]`
+deploy contractOwner 0 receiverContract ../sample/arc2_receiver.lua `[]`
 
 # transfer NFT001 from contractOwner to sample arc2 receiver contract
 call contractOwner 0 tokenCtr transfer `["AmhPjFwFYy52JM52U3DW9V39g5LkdabbvmNTDQdVAEbPuiPjBBnn", "NFT001"]`

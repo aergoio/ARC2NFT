@@ -1,7 +1,8 @@
 
 -- ARC2 token receiver interface
-function onARC2Received(operator, from, tokenId, ... )
-  contract.event("GotARC2", operator, from, tokenId, ... )
+function onARC2Received(operator, from, tokenId, ...)
+  contract.event("GotARC2", operator, from, tokenId, ...)
+  return "GotARC2: " .. tokenId
 end
 
 function transferARC2(contractId, to, tokenId, ...)

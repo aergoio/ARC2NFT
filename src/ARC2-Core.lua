@@ -68,7 +68,9 @@ end
 
 local function _callOnARC2Received(from, to, tokenId, ...)
   if to ~= address0 and system.isContract(to) then
-    contract.call(to, "onARC2Received", system.getSender(), from, tokenId, ...)
+    return contract.call(to, "onARC2Received", system.getSender(), from, tokenId, ...)
+  else
+    return nil
   end
 end
 
