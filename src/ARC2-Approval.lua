@@ -8,39 +8,37 @@ state.var {
   _operatorApprovals = state.map()  -- address/address -> bool
 }
 
--- Approve `operator` to operate on `tokenId`
--- Emits an approve event
-local function _approve(operator, tokenId)
-  local token = _tokens[tokenId]
-  local owner = token["owner"]
-  assert(not _paused:get(), "ARC2: paused contract")
-  assert(not _blacklist[owner], "ARC2: owner is on blacklist")
-  if operator == nil then
-    table.remove(token, "approved")
-  else
-    assert(not _blacklist[operator], "ARC2: user is on blacklist")
-    token["approved"] = operator
-  end
-  _tokens[tokenId] = token
-  contract.event("approve", owner, operator, tokenId)
-end
-
--- Approve an account to operate on the given non-fungible token
+-- Approve an account to operate on the given non-fungible token.
+-- Use `nil` on the operator to remove the approval
 -- @type    call
 -- @param   operator    (address) the new approved NFT controller
 -- @param   tokenId     (str128) the NFT token to be controlled
 -- @event   approve(owner, operator, tokenId)
 function approve(operator, tokenId)
-  _typecheck(operator, 'address')
   _typecheck(tokenId, 'str128')
+  if operator ~= nil then
+    _typecheck(operator, 'address')
+  end
 
-  local owner = ownerOf(tokenId)
-  assert(owner ~= nil, "ARC2: approve - nonexisting token")
+  local token = _tokens[tokenId]
+  assert(token ~= nil, "ARC2: approve - nonexisting token")
+  local owner = token["owner"]
+
+  assert(not _paused:get(), "ARC2: paused contract")
+  assert(not _blacklist[owner], "ARC2: owner is on blacklist")
+  if operator ~= nil then
+    assert(not _blacklist[operator], "ARC2: operator is on blacklist")
+  end
+
   assert(owner ~= operator, "ARC2: approve - to current owner")
-  assert(system.getSender() == owner or isApprovedForAll(owner, system.getSender()), 
+  local sender = system.getSender()
+  assert(sender == owner or isApprovedForAll(owner, sender),
     "ARC2: approve - caller is not owner nor approved for all")
 
-  _approve(operator, tokenId)
+  token["approved"] = operator
+  _tokens[tokenId] = token
+
+  contract.event("approve", owner, operator, tokenId)
 end
 
 -- Get the approved operator address for a given non-fungible token

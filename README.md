@@ -422,7 +422,8 @@ function burn(tokenId) end
 ### Approval extension
 
 ```lua
--- Approve an account to operate on the given non-fungible token
+-- Approve an account to operate on the given non-fungible token.
+-- Use `nil` on the operator to remove the approval
 -- @type    call
 -- @param   operator    (address) the new approved NFT controller
 -- @param   tokenId     (str128) the NFT token to be controlled
