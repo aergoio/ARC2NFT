@@ -19,7 +19,7 @@ query tokenCtr getApproved  `["NFT001"]` `"Amg25cfD4ibjmjPYbtWnMKocrF147gJJxKy5u
 
 # success to transfer
 call user1 0 tokenCtr transferFrom `["Amga6g1TiZxcmcZPYuL3b4mrkB4o25wwahmrn6H3d5M8jXshdMik", "Amg25cfD4ibjmjPYbtWnMKocrF147gJJxKy5uuFymEBNF2YiPwzr", "NFT001"]`
-# check approvement reset 
+# check approval reset
 query tokenCtr getApproved  `["NFT001"]` `null`
 
 
@@ -39,5 +39,5 @@ call user1 0 tokenCtr transferFrom `["Amga6g1TiZxcmcZPYuL3b4mrkB4o25wwahmrn6H3d5
 
 # disable approve
 call contractOwner 0 tokenCtr setApprovalForAll `["Amg25cfD4ibjmjPYbtWnMKocrF147gJJxKy5uuFymEBNF2YiPwzr", false]`
-# transfer must be failed
+# transfer should fail
 call user1 0 tokenCtr transferFrom `["Amga6g1TiZxcmcZPYuL3b4mrkB4o25wwahmrn6H3d5M8jXshdMik", "Amg25cfD4ibjmjPYbtWnMKocrF147gJJxKy5uuFymEBNF2YiPwzr", "NFT004"]` `ARC2: transferFrom - caller is not approved`

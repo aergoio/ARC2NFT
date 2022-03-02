@@ -17,7 +17,7 @@ state.var {
 function isPauser(account)
   _typecheck(account, 'address')
 
-  return (account == system.getCreator()) or (_pauser[account]==true)
+  return (account == system.getCreator()) or (_pauser[account] == true)
 end
 
 -- Grant the pauser role to an account
@@ -28,7 +28,7 @@ end
 function addPauser(account)
   _typecheck(account, 'address')
 
-  assert(system.getSender() == system.getCreator(), "ARC2: only contract owner can approve pauser role")
+  assert(system.getSender() == system.getCreator(), "ARC2: only contract owner can grant pauser role")
 
   _pauser[account] = true
 
@@ -44,7 +44,7 @@ function removePauser(account)
   _typecheck(account, 'address')
 
   assert(system.getSender() == system.getCreator(), "ARC2: only owner can remove pauser role")
-  assert(isPauser(account), "ARC2: only pauser can be removed pauser role")
+  assert(_pauser[account] == true, "ARC2: account does not have pauser role")
 
   _pauser[account] = nil
 
@@ -56,12 +56,13 @@ end
 -- @event   removePauser(account)
 
 function renouncePauser()
-  assert(system.getSender() ~= system.getCreator(), "ARC2: owner can't renounce pauser role")
-  assert(isPauser(system.getSender()), "ARC2: only pauser can renounce pauser role")
+  local sender = system.getSender()
+  assert(sender ~= system.getCreator(), "ARC2: owner can't renounce pauser role")
+  assert(_pauser[sender] == true, "ARC2: account does not have pauser role")
 
-  _pauser[system.getSender()] = nil
+  _pauser[sender] = nil
 
-  contract.event("removePauser", system.getSender())
+  contract.event("removePauser", sender)
 end
 
 -- Indicate if the contract is paused
@@ -77,12 +78,13 @@ end
 -- @event   pause(caller)
 
 function pause()
+  local sender = system.getSender()
   assert(not _paused:get(), "ARC2: contract is paused")
-  assert(isPauser(system.getSender()), "ARC2: only pauser can pause")
+  assert(isPauser(sender), "ARC2: only pauser can pause")
 
   _paused:set(true)
 
-  contract.event("pause", system.getSender())
+  contract.event("pause", sender)
 end
 
 -- Return the contract to the normal state
@@ -90,12 +92,13 @@ end
 -- @event   unpause(caller)
 
 function unpause()
+  local sender = system.getSender()
   assert(_paused:get(), "ARC2: contract is unpaused")
-  assert(isPauser(system.getSender()), "ARC2: only pauser can unpause")
+  assert(isPauser(sender), "ARC2: only pauser can unpause")
 
   _paused:set(false)
 
-  contract.event("unpause", system.getSender())
+  contract.event("unpause", sender)
 end
 
 
