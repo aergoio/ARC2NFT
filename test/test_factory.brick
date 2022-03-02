@@ -86,6 +86,12 @@ call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH remove_metadata 
 query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH get_metadata `["1123"]` `{"expiration":101,"fixed":10,"index":2,"owner":"AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2"}`
 
 
+# test the searchable extension
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH findToken `[{"metadata":{"expiration":{"op":">","value":100}}},0]` `[2,"1123"]`
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH findToken `[{"metadata":{"expiration":{"op":">","value":100}}},2]` `[null,null]`
+
+
+
 # mint a non-transferable token
 call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH mint `["AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2","1133",{"haha":123,"fixed":100,"non_transferable":true}]`
 
