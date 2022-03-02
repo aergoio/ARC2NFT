@@ -35,22 +35,23 @@ local function token_matches(tokenId, query)
         neg = true
         op = string.sub(op, 2)
       end
-      if token[key] == nil and op ~= "=" then
-        -- does not matches
-      elseif op == ">" then
-        matches = token[key] > value
-      elseif op == ">=" then
-        matches = token[key] >= value
-      elseif op == "<" then
-        matches = token[key] < value
-      elseif op == "<=" then
-        matches = token[key] <= value
+      local token_value = token[key]
+      if token_value == nil and op ~= "=" then
+        -- does not match
       elseif op == "=" then
-        matches = token[key] == value
+        matches = token_value == value
+      elseif op == ">" then
+        matches = token_value > value
+      elseif op == ">=" then
+        matches = token_value >= value
+      elseif op == "<" then
+        matches = token_value < value
+      elseif op == "<=" then
+        matches = token_value <= value
       elseif op == "between" then
-        matches = (token[key] >= value and token[key] <= find["value2"])
+        matches = (token_value >= value and token_value <= find["value2"])
       elseif op == "regex" then
-        matches = string.match(token[key], value)
+        matches = string.match(token_value, value)
       else
         assert(false, "operator not known: " .. op)
       end
