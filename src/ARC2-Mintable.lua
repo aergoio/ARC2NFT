@@ -5,7 +5,6 @@
 extensions["mintable"] = true
 
 state.var {
-  -- mintable
   _minter = state.map(),       -- address -> boolean
   _max_supply = state.value()  -- integer
 }
@@ -27,7 +26,7 @@ end
 function isMinter(account)
   _typecheck(account, 'address')
 
-  return (account == system.getCreator()) or (_minter[account]==true)
+  return (account == system.getCreator()) or (_minter[account] == true)
 end
 
 -- Add an account to minters
@@ -38,7 +37,9 @@ end
 function addMinter(account)
   _typecheck(account, 'address')
 
-  assert(system.getSender() == system.getCreator(), "ARC2: only the contract owner can add a minter")
+  local creator = system.getCreator()
+  assert(system.getSender() == creator, "ARC2: only the contract owner can add a minter")
+  assert(account ~= creator, "ARC2: the contract owner is always a minter")
 
   _minter[account] = true
 
@@ -53,8 +54,9 @@ end
 function removeMinter(account)
   _typecheck(account, 'address')
 
-  assert(system.getSender() == system.getCreator(), "ARC2: only the contract owner can remove a minter")
-  assert(account ~= system.getCreator(), "ARC2: the contract owner is always a minter")
+  local creator = system.getCreator()
+  assert(system.getSender() == creator, "ARC2: only the contract owner can remove a minter")
+  assert(account ~= creator, "ARC2: the contract owner is always a minter")
   assert(isMinter(account), "ARC2: not a minter")
 
   _minter:delete(account)
@@ -87,7 +89,8 @@ end
 
 function mint(to, tokenId, metadata, ...)
   assert(isMinter(system.getSender()), "ARC2: only minter can mint")
-  assert(not _max_supply:get() or (totalSupply() + 1) <= _max_supply:get(), "ARC2: totalSupply is over MaxSupply")
+  local max_supply = _max_supply:get()
+  assert(not max_supply or (totalSupply() + 1) <= max_supply, "ARC2: TotalSupply is over MaxSupply")
 
   return _mint(to, tokenId, metadata, ...)
 end
