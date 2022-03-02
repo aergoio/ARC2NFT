@@ -1,11 +1,6 @@
 name: CI
 
-on:
-  # Triggers the workflow on push or pull request events
-  push:
-  pull_request:
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
+on: [push, pull_request, workflow_dispatch]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -22,7 +17,7 @@ jobs:
       # Runs a set of commands using the runners shell
       - name: test
         run: |
-          wget https://github.com/aergoio/aergo/releases/download/v2.2.10/aergo-2.2.10.linux.tar.gz
+          wget --no-verbose https://github.com/aergoio/aergo/releases/download/v2.2.10/aergo-2.2.10.linux.tar.gz
           tar zxvf aergo-2.2.10.linux.tar.gz
           sudo cp aergo/2.2.10/bin/brick /usr/local/bin
           ./test/run_tests
