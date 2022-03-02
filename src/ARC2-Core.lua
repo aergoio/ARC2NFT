@@ -322,9 +322,9 @@ function arc2_extensions()
   for name,_ in pairs(extensions) do
     table.insert(list, name)
   end
-  return json.encode(list)
+  return list
 end
 
 
-abi.register(transfer, transferFrom, arc2_extensions)
-abi.register_view(name, symbol, balanceOf, ownerOf, totalSupply, nextToken, tokenFromUser)
+abi.register(transfer, transferFrom)
+abi.register_view(name, symbol, balanceOf, ownerOf, totalSupply, nextToken, tokenFromUser, arc2_extensions)
