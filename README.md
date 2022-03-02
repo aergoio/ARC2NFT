@@ -286,11 +286,12 @@ function balanceOf(owner) end
 -- @return (address) the address of the owner of the NFT
 function ownerOf(tokenId) end
 
--- Transfer a token to 'to'
+-- Transfer a token
 -- @type    call
--- @param   to      (address) a receiver's address
+-- @param   to      (address) the receiver address
 -- @param   tokenId (str128) the NFT token to send
--- @param   ...     (Optional) addtional data, MUST be sent unaltered in call to 'onARC2Received' on 'to'
+-- @param   ...     (Optional) additional data, is sent unaltered in a call to 'onARC2Received' on 'to'
+-- @return  value returned from the 'onARC2Received' callback, or nil
 -- @event   transfer(from, to, tokenId)
 function transfer(to, tokenId, ...) end
 
@@ -299,6 +300,26 @@ function transfer(to, tokenId, ...) end
 -- @type    query
 function arc2_extensions() end
 ```
+
+These additional functions below are also present in the core module
+
+The `enumerable` functions:
+
+```lua
+-- Retrieves the next token in the contract
+-- @type    query
+-- @param   prev_index (integer) the index of the previous returned token. use `0` in the first call
+-- @return  (index, tokenId) the index of the next token and its token id, or `nil,nil` if no more tokens
+function nextToken(prev_index)
+
+-- Retrieves the token from the given user at the given position
+-- @type    query
+-- @param   user      (address) ..
+-- @param   position  (integer) the position of the token in the incremental sequence
+-- @return  tokenId   (str128) the token id, or `nil` if no more tokens on this account
+function tokenFromUser(user, position)
+```
+
 
 ### Metadata extension
 
@@ -355,81 +376,86 @@ function get_metadata_info()
 -- @return  (bool) true/false
 function isMinter(account)
 
--- Add an account to minters
+-- Add an account to the minters group
 -- @type    call
 -- @param   account  (address)
 -- @event   addMinter(account)
 function addMinter(account)
 
--- Remove an account from minters
+-- Remove an account from the minters group
 -- @type    call
 -- @param   account  (address)
 -- @event   removeMinter(account)
 function removeMinter(account)
 
--- Renounce the Minter Role of TX sender
+-- Renounce the minter role
 -- @type    call
--- @event   removeMinter(TX sender)
+-- @event   removeMinter(caller)
 function renounceMinter()
 
 -- Mint a new non-fungible token
 -- @type    call
 -- @param   to       (address) recipient's address
--- @param   tokenId  (str128) the NFT id
+-- @param   tokenId  (str128) the non-fungible token id
 -- @param   metadata (table) lua table containing key-value pairs
--- @param   ...      additional data, is sent unaltered in call to 'tokensReceived' on 'to'
--- @return  value returned from 'tokensReceived' callback, or nil
+-- @param   ...      additional data, is sent unaltered in a call to 'onARC2Received' on 'to'
+-- @return  value returned from the 'onARC2Received' callback, or nil
 -- @event   mint(to, tokenId)
 function mint(to, tokenId, metadata, ...)
 
--- return Max Supply
+-- Retrieve the Max Supply
 -- @type    query
--- @return  amount   (integer) amount of tokens to mint
+-- @return  amount   (integer) the maximum amount of tokens that can be active on the contract
 function maxSupply()
 ```
 
 ### Burnable extension
 
 ``` lua
+-- Burn a non-fungible token
+-- @type    call
+-- @param   tokenId  (str128) the identifier of the token to be burned
+-- @event   burn(owner, tokenId)
 function burn(tokenId) end
 ```
 
 ### Approval extension
 
 ```lua
--- Change or reaffirm the approved address for an NFT
+-- Approve an account to operate on the given non-fungible token
 -- @type    call
--- @param   to          (address) the new approved NFT controller
--- @param   tokenId     (str128) the NFT token to approve
--- @event   approve(owner, to, tokenId)
-function approve(to, tokenId) end
+-- @param   operator    (address) the new approved NFT controller
+-- @param   tokenId     (str128) the NFT token to be controlled
+-- @event   approve(owner, operator, tokenId)
+function approve(operator, tokenId) end
 
--- Get the approved address for a single NFT
+-- Get the approved operator address for a given non-fungible token
 -- @type    query
--- @param   tokenId  (str128) the NFT token to find the approved address for
--- @return  (address) the approved address for this NFT, or the zero address if there is none
+-- @param   tokenId  (str128) the NFT token to find the approved operator
+-- @return  (address) the approved operator address for this NFT, or nil if there is none
 function getApproved(tokenId) end
 
--- Allow operator to control all sender's token
+-- Allow an operator to control all the sender's tokens
 -- @type    call
--- @param   operator  (address) a operator's address
+-- @param   operator  (address) the operator address
 -- @param   approved  (boolean) true if the operator is approved, false to revoke approval
 -- @event   approvalForAll(owner, operator, approved)
 function setApprovalForAll(operator, approved) end
 
--- Get allowance from owner to spender
+-- Check if the given operator is approved to control the owner's tokens
 -- @type    query
--- @param   owner       (address) owner's address
--- @param   operator    (address) allowed address
+-- @param   owner       (address) owner address
+-- @param   operator    (address) operator address
 -- @return  (bool) true/false
 function isApprovedForAll(owner, operator) end
 
--- Transfer a token of 'from' to 'to'
+-- Transfer a non-fungible token of 'from' to 'to'
 -- @type    call
--- @param   from    (address) a sender's address
--- @param   to      (address) a receiver's address
--- @param   tokenId (str128) the NFT token to send
--- @param   ...     (Optional) addtional data, MUST be sent unaltered in call to 'onARC2Received' on 'to'
+-- @param   from    (address) the owner address
+-- @param   to      (address) the receiver address
+-- @param   tokenId (str128) the non-fungible token to send
+-- @param   ...     (Optional) additional data, is sent unaltered in a call to 'onARC2Received' on 'to'
+-- @return  value returned from the 'onARC2Received' callback, or nil
 -- @event   transfer(from, to, tokenId)
 function transferFrom(from, to, tokenId, ...) end
 ```
@@ -437,61 +463,61 @@ function transferFrom(from, to, tokenId, ...) end
 ### Pausable extension
 
 ``` lua
--- Indicate an account has the Pauser Role
+-- Indicate whether an account has the pauser role
 -- @type    query
 -- @param   account  (address)
 -- @return  (bool) true/false
 function isPauser(account)
 
--- Grant the Pauser Role to an account
+-- Grant the pauser role to an account
 -- @type    call
 -- @param   account  (address)
 -- @event   addPauser(account)
 function addPauser(account)
 
--- Remove the Pauser Role form an account
+-- Remove the pauser role form an account
 -- @type    call
 -- @param   account  (address)
 -- @event   removePauser(account)
 function removePauser(account)
 
--- Renounce the graned Pauser Role of TX sender
+-- Renounce the granted pauser role
 -- @type    call
--- @event   removePauser(TX sender)
+-- @event   removePauser(account)
 function renouncePauser()
 
--- Indecate if the contract is paused
+-- Indicate if the contract is paused
 -- @type    query
 -- @return  (bool) true/false
 function paused()
 
--- Trigger stopped state
+-- Put the contract in a paused state
 -- @type    call
--- @event   pause(TX sender)
+-- @event   pause(caller)
 function pause()
 
--- Return to normal state
+-- Return the contract to the normal state
 -- @type    call
--- @event   unpause(TX sender)
+-- @event   unpause(caller)
 function unpause()
 ```
 
 ### Blacklist extension
 
 ``` lua
--- Add accounts to blacklist
+-- Add accounts to the blacklist
 -- @type    call
 -- @param   account_list (list of address)
 -- @event   addToBlacklist(account_list)
 function addToBlacklist(account_list)
 
--- Remove accounts from blacklist
+-- Remove accounts from the blacklist
 -- @type    call
 -- @param   account_list  (list of address)
 -- @event   removeFromBlacklist(account_list)
 function removeFromBlacklist(account_list)
 
--- Indicate if an account is on blacklist
+-- Indicate if an account is on the blacklist
 -- @type    query
 -- @param   account   (address)
 function isOnBlacklist(account)
@@ -516,6 +542,11 @@ It is used to make recallable tokens
 It is used to search for tokens using REGEX pattern.
 
 ```lua
+-- Find the next token that matches the given query
+-- @type    query
+-- @param   query      (table) lua table containing parameters used by the search
+-- @param   prev_index (integer) the index of the previous returned token. use `0` in the first call
+-- @return  (index, tokenId) the index of the next found token and its token id
 function findToken(query, prev_index)
 ```
 
@@ -527,12 +558,12 @@ Check instructions bellow for usage and examples
 Contracts that want to handle tokens must implement the following function to define how to handle the tokens they receive. If this function is not implemented, the token transfer will fail. Therefore, it is possible to prevent the token from being lost.
 
 ``` lua
--- The ARC2 smart contract calls this function on the recipient after a 'transfer'
--- @param   operator    (address) a address which called token 'transfer' function
--- @param   from        (address) a sender's address
--- @param   tokenId     (str128)  the NFT id
--- @param   ...         addtional data, by-passed from 'transfer' or 'mint' arguments
+-- The ARC2 smart contract calls this function on the recipient contract after a 'transfer' or 'mint'
 -- @type    call
+-- @param   operator    (address) the address that called the token 'transfer' or 'mint'
+-- @param   from        (address) the sender's address (nil if being minted)
+-- @param   tokenId     (str128)  the non-fungible token id
+-- @param   ...         additional data, by-passed from 'transfer' or 'mint' arguments
 function onARC2Received(operator, from, tokenId, ...) end
 ```
 

@@ -29,7 +29,7 @@ function isMinter(account)
   return (account == system.getCreator()) or (_minter[account] == true)
 end
 
--- Add an account to minters
+-- Add an account to the minters group
 -- @type    call
 -- @param   account  (address)
 -- @event   addMinter(account)
@@ -46,7 +46,7 @@ function addMinter(account)
   contract.event("addMinter", account)
 end
 
--- Remove an account from minters
+-- Remove an account from the minters group
 -- @type    call
 -- @param   account  (address)
 -- @event   removeMinter(account)
@@ -64,9 +64,9 @@ function removeMinter(account)
   contract.event("removeMinter", account)
 end
 
--- Renounce the Minter Role of TX sender
+-- Renounce the minter role
 -- @type    call
--- @event   removeMinter(TX sender)
+-- @event   removeMinter(account)
 
 function renounceMinter()
   local sender = system.getSender()
@@ -83,8 +83,8 @@ end
 -- @param   to       (address) recipient's address
 -- @param   tokenId  (str128) the non-fungible token id
 -- @param   metadata (table) lua table containing key-value pairs
--- @param   ...      additional data, is sent unaltered in call to 'tokensReceived' on 'to'
--- @return  value returned from 'tokensReceived' callback, or nil
+-- @param   ...      additional data, is sent unaltered in a call to 'onARC2Received' on 'to'
+-- @return  value returned from the 'onARC2Received' callback, or nil
 -- @event   mint(to, tokenId)
 
 function mint(to, tokenId, metadata, ...)
@@ -95,9 +95,9 @@ function mint(to, tokenId, metadata, ...)
   return _mint(to, tokenId, metadata, ...)
 end
 
--- return Max Supply
+-- Retrieve the Max Supply
 -- @type    query
--- @return  amount   (integer) amount of tokens to mint
+-- @return  amount   (integer) the maximum amount of tokens that can be active on the contract
 
 function maxSupply()
   return _max_supply:get() or 0

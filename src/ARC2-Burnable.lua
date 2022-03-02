@@ -4,6 +4,10 @@
 
 extensions["burnable"] = true
 
+-- Burn a non-fungible token
+-- @type    call
+-- @param   tokenId  (str128) the identifier of the token to be burned
+-- @event   burn(owner, tokenId)
 function burn(tokenId)
   _typecheck(tokenId, 'str128')
 

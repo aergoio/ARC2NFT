@@ -222,9 +222,10 @@ end
 
 -- Transfer a token
 -- @type    call
--- @param   to      (address) a receiver's address
--- @param   tokenId (str128) the non-fungible token to send
--- @param   ...     (Optional) addtional data, MUST be sent unaltered in call to 'onARC2Received' on 'to'
+-- @param   to      (address) the receiver address
+-- @param   tokenId (str128) the NFT token to send
+-- @param   ...     (Optional) additional data, is sent unaltered in a call to 'onARC2Received' on 'to'
+-- @return  value returned from the 'onARC2Received' callback, or nil
 -- @event   transfer(from, to, tokenId)
 function transfer(to, tokenId, ...)
   _typecheck(to, 'address')
@@ -245,12 +246,13 @@ function transfer(to, tokenId, ...)
   return _transfer(sender, to, tokenId, ...)
 end
 
--- Transfer a token of 'from' to 'to'
+-- Transfer a non-fungible token of 'from' to 'to'
 -- @type    call
--- @param   from    (address) a sender's address
--- @param   to      (address) a receiver's address
--- @param   tokenId (str128) the NFT token to send
--- @param   ...     (Optional) addtional data, MUST be sent unaltered in call to 'onARC2Received' on 'to'
+-- @param   from    (address) the owner address
+-- @param   to      (address) the receiver address
+-- @param   tokenId (str128) the non-fungible token to send
+-- @param   ...     (Optional) additional data, is sent unaltered in a call to 'onARC2Received' on 'to'
+-- @return  value returned from the 'onARC2Received' callback, or nil
 -- @event   transfer(from, to, tokenId)
 function transferFrom(from, to, tokenId, ...)
   _typecheck(from, 'address')
@@ -286,6 +288,11 @@ end
 
 -- Token Enumeration Functions --
 
+
+-- Retrieves the next token in the contract
+-- @type    query
+-- @param   prev_index (integer) the index of the previous returned token. use `0` in the first call
+-- @return  (index, tokenId) the index of the next token and its token id, or `nil,nil` if no more tokens
 function nextToken(prev_index)
   _typecheck(prev_index, 'uint')
 
@@ -305,6 +312,11 @@ function nextToken(prev_index)
   return index, tokenId
 end
 
+-- Retrieves the token from the given user at the given position
+-- @type    query
+-- @param   user      (address) ..
+-- @param   position  (integer) the position of the token in the incremental sequence
+-- @return  tokenId   (str128) the token id, or `nil` if no more tokens on this account
 function tokenFromUser(user, position)
   _typecheck(user, 'address')
   _typecheck(position, 'uint')

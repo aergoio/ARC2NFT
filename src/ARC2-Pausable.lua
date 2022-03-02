@@ -6,12 +6,10 @@
 extensions["pausable"] = true
 
 state.var {
-  -- pausable
-  _pauser = state.map(),   -- address -> boolean
+  _pauser = state.map()    -- address -> boolean
 }
 
-
--- Indicate an account has the Pauser Role
+-- Indicate whether an account has the pauser role
 -- @type    query
 -- @param   account  (address)
 -- @return  (bool) true/false
@@ -22,8 +20,7 @@ function isPauser(account)
   return (account == system.getCreator()) or (_pauser[account]==true)
 end
 
-
--- Grant the Pauser Role to an account
+-- Grant the pauser role to an account
 -- @type    call
 -- @param   account  (address)
 -- @event   addPauser(account)
@@ -38,8 +35,7 @@ function addPauser(account)
   contract.event("addPauser", account)
 end
 
-
--- Removes the Pauser Role form an account
+-- Removes the pauser role from an account
 -- @type    call
 -- @param   account  (address)
 -- @event   removePauser(account)
@@ -55,10 +51,9 @@ function removePauser(account)
   contract.event("removePauser", account)
 end
 
-
--- Renounce the graned Pauser Role of TX sender
+-- Renounce the granted pauser role
 -- @type    call
--- @event   removePauser(TX sender)
+-- @event   removePauser(account)
 
 function renouncePauser()
   assert(system.getSender() ~= system.getCreator(), "ARC2: owner can't renounce pauser role")
@@ -69,8 +64,7 @@ function renouncePauser()
   contract.event("removePauser", system.getSender())
 end
 
-
--- Indecate if the contract is paused
+-- Indicate if the contract is paused
 -- @type    query
 -- @return  (bool) true/false
 
@@ -78,10 +72,9 @@ function paused()
   return (_paused:get() == true)
 end
 
-
--- Trigger stopped state
+-- Put the contract in a paused state
 -- @type    call
--- @event   pause(TX sender)
+-- @event   pause(caller)
 
 function pause()
   assert(not _paused:get(), "ARC2: contract is paused")
@@ -92,10 +85,9 @@ function pause()
   contract.event("pause", system.getSender())
 end
 
-
--- Return to normal state
+-- Return the contract to the normal state
 -- @type    call
--- @event   unpause(TX sender)
+-- @event   unpause(caller)
 
 function unpause()
   assert(_paused:get(), "ARC2: contract is unpaused")
