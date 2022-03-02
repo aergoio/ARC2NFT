@@ -28,22 +28,60 @@ query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH tokenFromUser `["Amge
 query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH tokenFromUser `["AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2",2]` `null`
 query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH tokenFromUser `["AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2",0]` `null`
 
-call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH get_metadata `["1122"]`
-call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH make_metadata_immutable `["fixed"]`
-call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH set_metadata `["1122",{"haha":125}]`
-call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH get_metadata `["1122"]`
-call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH set_metadata `["1122",{"test":100}]`
-call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH get_metadata `["1122"]`
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH get_metadata `["1122"]` `{"haha":123,"index":1,"owner":"AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2"}`
 
-# mint a non_transferable token
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH make_metadata_immutable `["fixed"]`
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH make_metadata_incremental `["expiration"]`
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH get_metadata_info `[]` `{"expiration":"incremental","fixed":"immutable","index":"immutable"}`
+
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH set_metadata `["1122",{"fixed":10}]` `ARC2: immutable metadata`
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH set_metadata `["1122",{"expiration":100}]` `ARC2: incremental metadata`
+
+
+# mint a token with immutable and incremental metadata
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH mint `["AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2","1123",{"fixed":10,"expiration":100}]`
+
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH totalSupply `[]` `2`
+
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH nextToken `[0]` `[1,"1122"]`
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH nextToken `[1]` `[2,"1123"]`
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH nextToken `[2]` `[null,null]`
+
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH tokenFromUser `["AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2",1]` `"1122"`
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH tokenFromUser `["AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2",2]` `"1123"`
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH tokenFromUser `["AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2",3]` `null`
+
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH get_metadata `["1123"]` `{"expiration":100,"fixed":10,"index":2,"owner":"AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2"}`
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH set_metadata `["1123",{"test":"hello"}]`
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH get_metadata `["1123"]` `{"expiration":100,"fixed":10,"index":2,"owner":"AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2","test":"hello"}`
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH set_metadata `["1123",{"test":"updated","test2":"new"}]`
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH set_metadata `["1123",{"fixed":"should fail"}]` `ARC2: immutable metadata`
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH set_metadata `["1123",{"expiration":99}]` `ARC2: incremental metadata`
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH set_metadata `["1123",{"expiration":101}]`
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH get_metadata `["1123"]` `{"expiration":101,"fixed":10,"index":2,"owner":"AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2","test":"updated","test2":"new"}`
+
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH remove_metadata `["1123",["test","test2"]]`
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH get_metadata `["1123"]` `{"expiration":101,"fixed":10,"index":2,"owner":"AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2"}`
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH remove_metadata `["1123",["haha"]]`
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH get_metadata `["1123"]` `{"expiration":101,"fixed":10,"index":2,"owner":"AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2"}`
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH remove_metadata `["1123",["index"]]` `ARC2: reserved metadata`
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH remove_metadata `["1123",["owner"]]` `ARC2: reserved metadata`
+# call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH remove_metadata `["1123",["approval"]]` `ARC2: reserved metadata`
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH remove_metadata `["1123",["fixed"]]` `ARC2: immutable metadata`
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH remove_metadata `["1123",["expiration"]]` `ARC2: incremental metadata`
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH get_metadata `["1123"]` `{"expiration":101,"fixed":10,"index":2,"owner":"AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2"}`
+
+
+# mint a non-transferable token
 call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH mint `["AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2","1133",{"haha":123,"fixed":100,"non_transferable":true}]`
 
 # check metadata
-query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH get_metadata `["1133"]` `{"fixed":100,"haha":123,"index":2,"non_transferable":true,"owner":"AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2"}`
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH get_metadata `["1133"]` `{"fixed":100,"haha":123,"index":3,"non_transferable":true,"owner":"AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2"}`
 
 query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH nextToken `[0]` `[1,"1122"]`
-query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH nextToken `[1]` `[2,"1133"]`
-query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH nextToken `[2]` `[null,null]`
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH nextToken `[1]` `[2,"1123"]`
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH nextToken `[2]` `[3,"1133"]`
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH nextToken `[3]` `[null,null]`
 
 # transfer by owner - should fail (non_transferable)
 call ac2 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH transfer `["Amh472hZcaLquvL4ZWoyVEYAoH3ZLAtMR2sw8xy9FnNBwhwF6Ktd","1133"]` `ARC2: this token is non-transferable`
@@ -56,7 +94,7 @@ call ac3 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH transfer `["Amh4
 # mint a recallable token
 call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH mint `["AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2","1144",{"haha":123,"fixed":100,"recallable":true}]`
 # check metadata
-query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH get_metadata `["1144"]` `{"fixed":100,"haha":123,"index":3,"owner":"AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2","recallable":true}`
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH get_metadata `["1144"]` `{"fixed":100,"haha":123,"index":4,"owner":"AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2","recallable":true}`
 
 # transfer by third account - should fail
 call ac3 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH transfer `["Amh472hZcaLquvL4ZWoyVEYAoH3ZLAtMR2sw8xy9FnNBwhwF6Ktd","1144"]` `ARC2: transfer of token that is not own`
@@ -75,7 +113,7 @@ call ac3 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH transfer `["Amge
 # mint a recallable non-transferable token
 call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH mint `["AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2","1155",{"haha":123,"fixed":100,"non_transferable":true,"recallable":true}]`
 # check metadata
-query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH get_metadata `["1155"]` `{"fixed":100,"haha":123,"index":4,"non_transferable":true,"owner":"AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2","recallable":true}`
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH get_metadata `["1155"]` `{"fixed":100,"haha":123,"index":5,"non_transferable":true,"owner":"AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2","recallable":true}`
 
 # transfer by third account - should fail
 call ac3 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH transfer `["Amh472hZcaLquvL4ZWoyVEYAoH3ZLAtMR2sw8xy9FnNBwhwF6Ktd","1155"]` `ARC2: this token is non-transferable`
