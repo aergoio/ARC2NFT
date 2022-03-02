@@ -97,7 +97,7 @@ function findToken(query, prev_index)
         else
           tokenId = nil
         end
-      elseif index == prev_index then
+      elseif index2 == prev_index then
         check_tokens = true
       end
     end
