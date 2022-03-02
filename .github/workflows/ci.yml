@@ -20,4 +20,5 @@ jobs:
           wget --no-verbose https://github.com/aergoio/aergo/releases/download/v2.2.10/aergo-2.2.10.linux.tar.gz
           tar zxvf aergo-2.2.10.linux.tar.gz
           sudo cp aergo/2.2.10/bin/brick /usr/local/bin
-          ./test/run_tests
+          cd test
+          ./run_tests
