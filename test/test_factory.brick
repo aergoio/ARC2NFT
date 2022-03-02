@@ -87,8 +87,16 @@ query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH get_metadata `["1123"
 
 
 # test the searchable extension
+
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH findToken `[{"contains":"11"},0]` `[1,"1122"]`
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH findToken `[{"contains":"11"},1]` `[2,"1123"]`
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH findToken `[{"contains":"11"},2]` `[null,null]`
+
 query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH findToken `[{"metadata":{"expiration":{"op":">","value":100}}},0]` `[2,"1123"]`
 query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH findToken `[{"metadata":{"expiration":{"op":">","value":100}}},2]` `[null,null]`
+
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH findToken `[{"owner":"AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2","metadata":{"expiration":{"op":">","value":100}}},0]` `[2,"1123"]`
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH findToken `[{"owner":"AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2","metadata":{"expiration":{"op":">","value":100}}},2]` `[null,null]`
 
 
 

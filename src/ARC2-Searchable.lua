@@ -88,10 +88,11 @@ function findToken(query, prev_index)
     local list = _user_tokens[owner] or {}
     local check_tokens = (prev_index == 0)
 
-    for position,index in ipairs(list) do
+    for position,index2 in ipairs(list) do
       if check_tokens then
-        tokenId = _ids[tostring(index)]
+        tokenId = _ids[tostring(index2)]
         if token_matches(tokenId, query) then
+          index = index2
           break
         else
           tokenId = nil
