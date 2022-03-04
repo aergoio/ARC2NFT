@@ -457,7 +457,7 @@ function isApprovedForAll(owner, operator) end
 -- @param   tokenId (str128) the non-fungible token to send
 -- @param   ...     (Optional) additional data, is sent unaltered in a call to 'onARC2Received' on 'to'
 -- @return  value returned from the 'onARC2Received' callback, or nil
--- @event   transfer(from, to, tokenId)
+-- @event   transfer(from, to, tokenId, operator)
 function transferFrom(from, to, tokenId, ...) end
 ```
 

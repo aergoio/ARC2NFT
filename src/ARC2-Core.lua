@@ -241,7 +241,7 @@ function transfer(to, tokenId, ...)
   local owner = token["owner"]
   assert(sender == owner, "ARC2: transfer of token that is not own")
 
-  contract.event("transfer", sender, to, tokenId, nil)
+  contract.event("transfer", sender, to, tokenId)
 
   return _transfer(sender, to, tokenId, ...)
 end
@@ -253,7 +253,7 @@ end
 -- @param   tokenId (str128) the non-fungible token to send
 -- @param   ...     (Optional) additional data, is sent unaltered in a call to 'onARC2Received' on 'to'
 -- @return  value returned from the 'onARC2Received' callback, or nil
--- @event   transfer(from, to, tokenId)
+-- @event   transfer(from, to, tokenId, operator)
 function transferFrom(from, to, tokenId, ...)
   _typecheck(from, 'address')
   _typecheck(to, 'address')
