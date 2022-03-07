@@ -290,8 +290,8 @@ function ownerOf(tokenId) end
 -- @type    call
 -- @param   to      (address) the receiver address
 -- @param   tokenId (str128) the NFT token to send
--- @param   ...     (Optional) additional data, is sent unaltered in a call to 'onARC2Received' on 'to'
--- @return  value returned from the 'onARC2Received' callback, or nil
+-- @param   ...     (Optional) additional data, is sent unaltered in a call to 'nonFungibleReceived' on 'to'
+-- @return  value returned from the 'nonFungibleReceived' callback, or nil
 -- @event   transfer(from, to, tokenId)
 function transfer(to, tokenId, ...) end
 
@@ -398,8 +398,8 @@ function renounceMinter()
 -- @param   to       (address) recipient's address
 -- @param   tokenId  (str128) the non-fungible token id
 -- @param   metadata (table) lua table containing key-value pairs
--- @param   ...      additional data, is sent unaltered in a call to 'onARC2Received' on 'to'
--- @return  value returned from the 'onARC2Received' callback, or nil
+-- @param   ...      additional data, is sent unaltered in a call to 'nonFungibleReceived' on 'to'
+-- @return  value returned from the 'nonFungibleReceived' callback, or nil
 -- @event   mint(to, tokenId)
 function mint(to, tokenId, metadata, ...)
 
@@ -455,8 +455,8 @@ function isApprovedForAll(owner, operator) end
 -- @param   from    (address) the owner address
 -- @param   to      (address) the receiver address
 -- @param   tokenId (str128) the non-fungible token to send
--- @param   ...     (Optional) additional data, is sent unaltered in a call to 'onARC2Received' on 'to'
--- @return  value returned from the 'onARC2Received' callback, or nil
+-- @param   ...     (Optional) additional data, is sent unaltered in a call to 'nonFungibleReceived' on 'to'
+-- @return  value returned from the 'nonFungibleReceived' callback, or nil
 -- @event   transfer(from, to, tokenId, operator)
 function transferFrom(from, to, tokenId, ...) end
 ```
@@ -565,7 +565,7 @@ Contracts that want to handle tokens must implement the following function to de
 -- @param   from        (address) the sender's address (nil if being minted)
 -- @param   tokenId     (str128)  the non-fungible token id
 -- @param   ...         additional data, by-passed from 'transfer' or 'mint' arguments
-function onARC2Received(operator, from, tokenId, ...) end
+function nonFungibleReceived(operator, from, tokenId, ...) end
 ```
 
 

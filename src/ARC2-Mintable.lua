@@ -83,8 +83,8 @@ end
 -- @param   to       (address) recipient's address
 -- @param   tokenId  (str128) the non-fungible token id
 -- @param   metadata (table) lua table containing key-value pairs
--- @param   ...      additional data, is sent unaltered in a call to 'onARC2Received' on 'to'
--- @return  value returned from the 'onARC2Received' callback, or nil
+-- @param   ...      additional data, is sent unaltered in a call to 'nonFungibleReceived' on 'to'
+-- @return  value returned from the 'nonFungibleReceived' callback, or nil
 -- @event   mint(to, tokenId)
 
 function mint(to, tokenId, metadata, ...)

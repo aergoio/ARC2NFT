@@ -66,9 +66,9 @@ local function _init(name, symbol)
   _paused:set(false)
 end
 
-local function _callOnARC2Received(from, to, tokenId, ...)
+local function _callReceiverCallback(from, to, tokenId, ...)
   if to ~= address0 and system.isContract(to) then
-    return contract.call(to, "onARC2Received", system.getSender(), from, tokenId, ...)
+    return contract.call(to, "nonFungibleReceived", system.getSender(), from, tokenId, ...)
   else
     return nil
   end
@@ -175,7 +175,7 @@ local function _mint(to, tokenId, metadata, ...)
 
   contract.event("mint", to, tokenId)
 
-  return _callOnARC2Received(nil, to, tokenId, ...)
+  return _callReceiverCallback(nil, to, tokenId, ...)
 end
 
 
@@ -216,7 +216,7 @@ local function _transfer(from, to, tokenId, ...)
   remove_from_owner(index, from)
   add_to_owner(index, to)
 
-  return _callOnARC2Received(from, to, tokenId, ...)
+  return _callReceiverCallback(from, to, tokenId, ...)
 end
 
 
@@ -224,8 +224,8 @@ end
 -- @type    call
 -- @param   to      (address) the receiver address
 -- @param   tokenId (str128) the NFT token to send
--- @param   ...     (Optional) additional data, is sent unaltered in a call to 'onARC2Received' on 'to'
--- @return  value returned from the 'onARC2Received' callback, or nil
+-- @param   ...     (Optional) additional data, is sent unaltered in a call to 'nonFungibleReceived' on 'to'
+-- @return  value returned from the 'nonFungibleReceived' callback, or nil
 -- @event   transfer(from, to, tokenId)
 function transfer(to, tokenId, ...)
   _typecheck(to, 'address')
@@ -251,8 +251,8 @@ end
 -- @param   from    (address) the owner address
 -- @param   to      (address) the receiver address
 -- @param   tokenId (str128) the non-fungible token to send
--- @param   ...     (Optional) additional data, is sent unaltered in a call to 'onARC2Received' on 'to'
--- @return  value returned from the 'onARC2Received' callback, or nil
+-- @param   ...     (Optional) additional data, is sent unaltered in a call to 'nonFungibleReceived' on 'to'
+-- @return  value returned from the 'nonFungibleReceived' callback, or nil
 -- @event   transfer(from, to, tokenId, operator)
 function transferFrom(from, to, tokenId, ...)
   _typecheck(from, 'address')
