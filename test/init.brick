@@ -17,11 +17,16 @@ deploy contractOwner 0 tokenCtr ../sample/output.lua
 query tokenCtr name  `[]` `"test_nft"`
 query tokenCtr symbol  `[]` `"TNFT"`
 
+query tokenCtr totalSupply `[]` `0`
+
 # mint initial tokens to the contractOwner
 call contractOwner 0 tokenCtr mint `["Amga6g1TiZxcmcZPYuL3b4mrkB4o25wwahmrn6H3d5M8jXshdMik", "NFT001"]`
 call contractOwner 0 tokenCtr mint `["Amga6g1TiZxcmcZPYuL3b4mrkB4o25wwahmrn6H3d5M8jXshdMik", "NFT002"]`
 call contractOwner 0 tokenCtr mint `["Amga6g1TiZxcmcZPYuL3b4mrkB4o25wwahmrn6H3d5M8jXshdMik", "NFT003"]`
 call contractOwner 0 tokenCtr mint `["Amga6g1TiZxcmcZPYuL3b4mrkB4o25wwahmrn6H3d5M8jXshdMik", "NFT004"]`
 call contractOwner 0 tokenCtr mint `["Amga6g1TiZxcmcZPYuL3b4mrkB4o25wwahmrn6H3d5M8jXshdMik", "NFT005"]`
+
+query tokenCtr totalSupply `[]` `5`
+query tokenCtr balanceOf `["Amga6g1TiZxcmcZPYuL3b4mrkB4o25wwahmrn6H3d5M8jXshdMik"]` `5`
 
 # query tokenCtr tokenURI `["NFT001"]` `""`
