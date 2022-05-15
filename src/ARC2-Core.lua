@@ -340,7 +340,7 @@ end
 
 
 function set_contract_owner(address)
-  assert(system.getSender() == _contract_owner:get(), "ARC1: permission denied")
+  assert(system.getSender() == _contract_owner:get(), "ARC2: permission denied")
   _typecheck(address, "address")
   _contract_owner:set(address)
 end
