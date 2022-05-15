@@ -51,7 +51,7 @@ end
 function set_metadata(tokenId, metadata)
   _typecheck(tokenId, 'str128')
 
-  assert(system.getSender() == system.getCreator(), "ARC2: permission denied")
+  assert(system.getSender() == _contract_owner:get(), "ARC2: permission denied")
   assert(not _paused:get(), "ARC2: paused contract")
 
   local token = _tokens[tokenId]
@@ -71,7 +71,7 @@ end
 function remove_metadata(tokenId, list)
   _typecheck(tokenId, 'str128')
 
-  assert(system.getSender() == system.getCreator(), "ARC2: permission denied")
+  assert(system.getSender() == _contract_owner:get(), "ARC2: permission denied")
   assert(not _paused:get(), "ARC2: paused contract")
 
   local token = _tokens[tokenId]
@@ -116,7 +116,7 @@ function make_metadata_immutable(key)
   _typecheck(key, 'string')
   assert(#key > 0, "ARC2: invalid key")
   assert(not is_reserved_metadata(key), "ARC2: reserved metadata")
-  assert(system.getSender() == system.getCreator(), "ARC2: permission denied")
+  assert(system.getSender() == _contract_owner:get(), "ARC2: permission denied")
   assert(not _paused:get(), "ARC2: paused contract")
 
   local immutable = _immutable_metadata:get() or {}
@@ -139,7 +139,7 @@ function make_metadata_incremental(key)
   _typecheck(key, 'string')
   assert(#key > 0, "ARC2: invalid key")
   assert(not is_reserved_metadata(key), "ARC2: reserved metadata")
-  assert(system.getSender() == system.getCreator(), "ARC2: permission denied")
+  assert(system.getSender() == _contract_owner:get(), "ARC2: permission denied")
   assert(not _paused:get(), "ARC2: paused contract")
 
   local incremental = _incremental_metadata:get() or {}

@@ -35,6 +35,8 @@ address0 = '1111111111111111111111111111111111111111111111111111'
 
 
 state.var {
+  _contract_owner = state.value(),  -- string
+
   _name = state.value(),            -- string
   _symbol = state.value(),          -- string
 
@@ -53,10 +55,17 @@ state.var {
 
 
 -- call this at constructor
-local function _init(name, symbol)
+local function _init(name, symbol, owner)
   _typecheck(name, 'string')
   _typecheck(symbol, 'string')
-  
+
+  if owner == nil or owner == '' then
+    owner = system.getCreator()
+  else
+    _typecheck(owner, "address")
+  end
+  _contract_owner:set(owner)
+
   _name:set(name)
   _symbol:set(symbol)
 
@@ -268,7 +277,7 @@ function transferFrom(from, to, tokenId, ...)
   local operator = system.getSender()
 
   -- if recallable, the creator/issuer can transfer the token
-  local is_recall = (extensions["recallable"] or token["recallable"]) and operator == system.getCreator()
+  local is_recall = (extensions["recallable"] or token["recallable"]) and operator == _contract_owner:get()
 
   if not is_recall then
     assert(extensions["approval"], "ARC2: approval extension not included")
@@ -328,6 +337,13 @@ function tokenFromUser(user, position)
 end
 
 
+function set_contract_owner(address)
+  assert(system.getSender() == _contract_owner:get(), "ARC1: permission denied")
+  _typecheck(address, "address")
+  _contract_owner:set(address)
+end
+
+
 -- Returns a JSON string containing the list of ARC2 extensions
 -- that were included on the contract.
 -- @type    query
@@ -340,5 +356,5 @@ function arc2_extensions()
 end
 
 
-abi.register(transfer, transferFrom)
+abi.register(transfer, transferFrom, set_contract_owner)
 abi.register_view(name, symbol, balanceOf, ownerOf, totalSupply, nextToken, tokenFromUser, arc2_extensions)

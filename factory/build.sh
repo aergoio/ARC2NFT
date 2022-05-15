@@ -5,7 +5,6 @@ base=`cat base.lua`
 process_file() {
   content=`cat ../src/ARC2-$1.lua`
   content="${content//]]/] ]}"
-  content="${content//system.getCreator()/_creator:get()}"
   base="${base/"$2"/$content}"
 }
 

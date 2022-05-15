@@ -39,13 +39,8 @@ arc2_recallable = [[
 ]]
 
 arc2_constructor = [[
-state.var {
-  _creator = state.value()
-}
-
 function constructor(name, symbol, initial_supply, max_supply, owner)
-  _init(name, symbol)
-  _creator:set(owner)
+  _init(name, symbol, owner)
   if initial_supply then
     for _,token in ipairs(initial_supply) do
       _mint(owner, token[1], token[2])

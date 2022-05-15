@@ -17,7 +17,7 @@ state.var {
 function isPauser(account)
   _typecheck(account, 'address')
 
-  return (account == system.getCreator()) or (_pauser[account] == true)
+  return (account == _contract_owner:get()) or (_pauser[account] == true)
 end
 
 -- Grant the pauser role to an account
@@ -28,7 +28,7 @@ end
 function addPauser(account)
   _typecheck(account, 'address')
 
-  assert(system.getSender() == system.getCreator(), "ARC2: only contract owner can grant pauser role")
+  assert(system.getSender() == _contract_owner:get(), "ARC2: only contract owner can grant pauser role")
 
   _pauser[account] = true
 
@@ -43,7 +43,7 @@ end
 function removePauser(account)
   _typecheck(account, 'address')
 
-  assert(system.getSender() == system.getCreator(), "ARC2: only owner can remove pauser role")
+  assert(system.getSender() == _contract_owner:get(), "ARC2: only owner can remove pauser role")
   assert(_pauser[account] == true, "ARC2: account does not have pauser role")
 
   _pauser[account] = nil
@@ -57,7 +57,7 @@ end
 
 function renouncePauser()
   local sender = system.getSender()
-  assert(sender ~= system.getCreator(), "ARC2: owner can't renounce pauser role")
+  assert(sender ~= _contract_owner:get(), "ARC2: owner can't renounce pauser role")
   assert(_pauser[sender] == true, "ARC2: account does not have pauser role")
 
   _pauser[sender] = nil
