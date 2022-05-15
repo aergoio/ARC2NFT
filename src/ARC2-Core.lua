@@ -61,6 +61,8 @@ local function _init(name, symbol, owner)
 
   if owner == nil or owner == '' then
     owner = system.getCreator()
+  elseif owner == 'none' then
+    owner = nil
   else
     _typecheck(owner, "address")
   end
