@@ -62,7 +62,7 @@ function new_arc2_nft(name, symbol, initial_supply, options, owner)
     owner = system.getSender()
   end
 
-  local contract_code = arc2_core .. arc2_constructor
+  local contract_code = arc2_core
 
   if options["burnable"] then
     contract_code = contract_code .. arc2_burnable
@@ -91,6 +91,8 @@ function new_arc2_nft(name, symbol, initial_supply, options, owner)
   if options["recallable"] then
     contract_code = contract_code .. arc2_recallable
   end
+
+  contract_code = contract_code .. arc2_constructor
 
   if initial_supply then
     for index,value in ipairs(initial_supply) do
