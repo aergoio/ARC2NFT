@@ -50,8 +50,8 @@ local function token_matches(tokenId, query)
         matches = token_value <= value
       elseif op == "between" then
         matches = (token_value >= value and token_value <= find["value2"])
-      elseif op == "regex" then
-        matches = string.match(token_value, value)
+      elseif op == "match" then
+        matches = string.match(token_value, value) ~= nil
       else
         assert(false, "operator not known: " .. op)
       end

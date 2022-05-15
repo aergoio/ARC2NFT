@@ -604,7 +604,7 @@ to use and the value, in this format:
 metadata = { key = {op = ">", value = 10} }
 ```
 
-The operators are: `= > >= < <= between regex` and negated: `!= !between !regex`
+The operators are: `= > >= < <= between match` and negated: `!= !between !match`
 
 The `prev_index` must be `0` in the first call.
 For the next calls, just inform the returned index from the previous call.
