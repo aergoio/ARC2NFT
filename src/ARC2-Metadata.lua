@@ -6,7 +6,8 @@ extensions["metadata"] = true
 
 state.var {
   _immutable_metadata = state.value(),
-  _incremental_metadata = state.value()
+  _incremental_metadata = state.value(),
+  _contract_metadata = state.value()
 }
 
 reserved_metadata = { "index", "owner", "approved" }
@@ -46,13 +47,27 @@ end
 
 -- Store non-fungible token metadata
 -- @type    call
--- @param   tokenId  (str128) the non-fungible token id
+-- @param   tokenId  (str128) the non-fungible token id, or nil for contract metadata
 -- @param   metadata (table)  lua table containing key-value pairs
 function set_metadata(tokenId, metadata)
-  _typecheck(tokenId, 'str128')
 
-  assert(system.getSender() == _contract_owner:get(), "ARC2: permission denied")
+  if extensions["mintable"] then
+    assert(isMinter(system.getSender()), "ARC2: permission denied")
+  else
+    assert(system.getSender() == _contract_owner:get(), "ARC2: permission denied")
+  end
   assert(not _paused:get(), "ARC2: paused contract")
+
+  if tokenId == nil then
+    local contract_metadata = _contract_metadata:get() or {}
+    for key,value in pairs(metadata) do
+      contract_metadata[key] = value
+    end
+    _contract_metadata:set(contract_metadata)
+    return
+  end
+
+  _typecheck(tokenId, 'str128')
 
   local token = _tokens[tokenId]
   assert(token ~= nil, "ARC2: nonexisting token")
@@ -69,10 +84,15 @@ end
 -- @param   tokenId  (str128) the non-fungible token id
 -- @param   list     (table)  lua table containing list of keys to remove
 function remove_metadata(tokenId, list)
-  _typecheck(tokenId, 'str128')
 
-  assert(system.getSender() == _contract_owner:get(), "ARC2: permission denied")
+  if extensions["mintable"] then
+    assert(isMinter(system.getSender()), "ARC2: permission denied")
+  else
+    assert(system.getSender() == _contract_owner:get(), "ARC2: permission denied")
+  end
   assert(not _paused:get(), "ARC2: paused contract")
+
+  _typecheck(tokenId, 'str128')
 
   local token = _tokens[tokenId]
   assert(token ~= nil, "ARC2: nonexisting token")
@@ -85,11 +105,20 @@ end
 
 -- Retrieve non-fungible token metadata
 -- @type    query
--- @param   tokenId  (str128) the non-fungible token id
+-- @param   tokenId  (str128) the non-fungible token id, or nil for contract metadata
 -- @param   key      (string) the metadata key
--- @return  (string) if key is nil, return all metadata from token,
---                   otherwise return the value linked to the key
+-- @return  (string) if key is nil, return all metadata from token or contract,
+--                   otherwise return the value linked to the given key
 function get_metadata(tokenId, key)
+
+  if tokenId == nil then
+    local contract_metadata = _contract_metadata:get() or {}
+    if key ~= nil then
+      return contract_metadata[key]
+    end
+    return contract_metadata
+  end
+
   _typecheck(tokenId, 'str128')
 
   local token = _tokens[tokenId]
