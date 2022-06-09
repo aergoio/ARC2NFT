@@ -279,7 +279,12 @@ function transferFrom(from, to, tokenId, ...)
   local operator = system.getSender()
 
   -- if recallable, the creator/issuer can transfer the token
-  local is_recall = (extensions["recallable"] or token["recallable"]) and operator == _contract_owner:get()
+  if extensions["mintable"] then
+    operator_can_recall = isMinter(operator)
+  else
+    operator_can_recall = (operator == _contract_owner:get())
+  end
+  local is_recall = (extensions["recallable"] or token["recallable"]) and operator_can_recall
 
   if not is_recall then
     assert(extensions["approval"], "ARC2: approval extension not included")
