@@ -35,14 +35,16 @@ address0 = '1111111111111111111111111111111111111111111111111111'
 
 
 state.var {
+  _contract_owner = state.value(),  -- string
+
   _name = state.value(),            -- string
   _symbol = state.value(),          -- string
 
   _num_burned = state.value(),      -- integer
   _last_index = state.value(),      -- integer
   _ids = state.map(),               -- integer -> str128
-  _tokens = state.map(),            -- str128 -> { owner: address, approved: address }
-  _balances = state.map(),          -- address -> integer
+  _tokens = state.map(),            -- str128 -> { index: integer, owner: address, approved: address }
+  _user_tokens = state.map(),       -- address -> array of integers (index to tokenId)
 
   -- Pausable
   _paused = state.value(),          -- boolean
@@ -53,10 +55,19 @@ state.var {
 
 
 -- call this at constructor
-local function _init(name, symbol)
+local function _init(name, symbol, owner)
   _typecheck(name, 'string')
   _typecheck(symbol, 'string')
-  
+
+  if owner == nil or owner == '' then
+    owner = system.getCreator()
+  elseif owner == 'none' then
+    owner = nil
+  else
+    _typecheck(owner, "address")
+  end
+  _contract_owner:set(owner)
+
   _name:set(name)
   _symbol:set(symbol)
 
@@ -66,9 +77,11 @@ local function _init(name, symbol)
   _paused:set(false)
 end
 
-local function _callOnARC2Received(from, to, tokenId, ...)
-  if system.isContract(to) then
-    contract.call(to, "onARC2Received", system.getSender(), from, tokenId, ...)
+local function _callReceiverCallback(from, to, tokenId, ...)
+  if to ~= address0 and system.isContract(to) then
+    return contract.call(to, "nonFungibleReceived", system.getSender(), from, tokenId, ...)
+  else
+    return nil
   end
 end
 
@@ -100,15 +113,16 @@ end
 -- Count of all NFTs assigned to an owner
 -- @type    query
 -- @param   owner  (address) a target address
--- @return  (integer) the number of NFT tokens of owner
+-- @return  (integer) the number of non-fungible tokens of owner
 function balanceOf(owner)
-  return _balances[owner] or 0
+  local list = _user_tokens[owner] or {}
+  return #list
 end
 
 -- Find the owner of an NFT
 -- @type    query
--- @param   tokenId (str128) the NFT id
--- @return  (address) the address of the owner of the NFT, or nil if token does not exist
+-- @param   tokenId  (str128) the non-fungible token id
+-- @return  (address) the address of the owner, or nil if the token does not exist
 function ownerOf(tokenId)
   local token = _tokens[tokenId]
   if token == nil then
@@ -119,8 +133,29 @@ function ownerOf(tokenId)
 end
 
 
+local function add_to_owner(index, owner)
+  local list = _user_tokens[owner] or {}
+  table.insert(list, index)
+  _user_tokens[owner] = list
+end
 
-local function _mint(to, tokenId, ...)
+local function remove_from_owner(index, owner)
+  local list = _user_tokens[owner] or {}
+  for position,value in ipairs(list) do
+    if value == index then
+      table.remove(list, position)
+      break
+    end
+  end
+  if #list > 0 then
+    _user_tokens[owner] = list
+  else
+    _user_tokens:delete(owner)
+  end
+end
+
+
+local function _mint(to, tokenId, metadata, ...)
   _typecheck(to, 'address')
   _typecheck(tokenId, 'str128')
 
@@ -128,39 +163,49 @@ local function _mint(to, tokenId, ...)
   assert(not _blacklist[to], "ARC2: recipient is on blacklist")
 
   assert(not _exists(tokenId), "ARC2: mint - already minted token")
+  assert(metadata==nil or type(metadata)=="table", "ARC2: invalid metadata")
 
   local index = _last_index:get() + 1
   _last_index:set(index)
   _ids[tostring(index)] = tokenId
 
   local token = {
+    index = index,
     owner = to
   }
+  if metadata ~= nil then
+    assert(extensions["metadata"], "ARC2: this token has no support for metadata")
+    for key,value in pairs(metadata) do
+      assert(not is_reserved_metadata(key), "ARC2: reserved metadata")
+      token[key] = value
+    end
+  end
   _tokens[tokenId] = token
 
-  _balances[to] = (_balances[to] or 0) + 1
+  add_to_owner(index, to)
 
   contract.event("mint", to, tokenId)
 
-  return _callOnARC2Received(nil, to, tokenId, ...)
+  return _callReceiverCallback(nil, to, tokenId, ...)
 end
 
 
 local function _burn(tokenId)
   _typecheck(tokenId, 'str128')
 
-  local owner = ownerOf(tokenId)
+  local token = _tokens[tokenId]
+  assert(token ~= nil, "ARC2: burn: token not found")
+  local index = token["index"]
+  local owner = token["owner"]
 
   assert(not _paused:get(), "ARC2: paused contract")
   assert(not _blacklist[owner], "ARC2: owner is on blacklist")
 
-  local index,_ = findToken({contains=tokenId}, 0)
-  assert(index ~= nil and index > 0, "burn: token not found")
-  -- _ids[tostring(index)] = nil
   _ids:delete(tostring(index))
 
   _tokens:delete(tokenId)
-  _balances[owner] = _balances[owner] - 1
+
+  remove_from_owner(index, owner)
 
   _num_burned:set(_num_burned:get() + 1)
 
@@ -173,48 +218,97 @@ local function _transfer(from, to, tokenId, ...)
   assert(not _blacklist[from], "ARC2: sender is on blacklist")
   assert(not _blacklist[to], "ARC2: recipient is on blacklist")
 
-  _balances[from] = _balances[from] - 1
-  _balances[to] = (_balances[to] or 0) + 1
-
---[[
   local token = _tokens[tokenId]
   token["owner"] = to
-  table.remove(token, "approved")  -- clear approval
-  _tokens[tokenId] = token
-]]
-
-  -- this will also clear approvals from the previous owner
-  local token = {
-    owner = to
-  }
+  token["approved"] = nil   -- clear approval
   _tokens[tokenId] = token
 
-  return _callOnARC2Received(from, to, tokenId, ...)
+  local index = token["index"]
+  remove_from_owner(index, from)
+  add_to_owner(index, to)
+
+  return _callReceiverCallback(from, to, tokenId, ...)
 end
 
 
 -- Transfer a token
 -- @type    call
--- @param   to      (address) a receiver's address
+-- @param   to      (address) the receiver address
 -- @param   tokenId (str128) the NFT token to send
--- @param   ...     (Optional) addtional data, MUST be sent unaltered in call to 'onARC2Received' on 'to'
+-- @param   ...     (Optional) additional data, is sent unaltered in a call to 'nonFungibleReceived' on 'to'
+-- @return  value returned from the 'nonFungibleReceived' callback, or nil
 -- @event   transfer(from, to, tokenId)
 function transfer(to, tokenId, ...)
   _typecheck(to, 'address')
   _typecheck(tokenId, 'str128')
 
-  local from = system.getSender()
+  local token = _tokens[tokenId]
+  assert(token ~= nil, "ARC2: transfer - nonexisting token")
 
-  local owner = ownerOf(tokenId)
-  assert(owner ~= nil, "ARC2: transfer - nonexisting token")
-  assert(from == owner, "ARC2: transfer of token that is not own")
+  assert(extensions["non_transferable"] == nil and
+              token["non_transferable"] == nil, "ARC2: this token is non-transferable")
 
-  contract.event("transfer", from, to, tokenId, nil)
+  local sender = system.getSender()
+  local owner = token["owner"]
+  assert(sender == owner, "ARC2: transfer of token that is not own")
+
+  contract.event("transfer", sender, to, tokenId)
+
+  return _transfer(sender, to, tokenId, ...)
+end
+
+-- Transfer a non-fungible token of 'from' to 'to'
+-- @type    call
+-- @param   from    (address) the owner address
+-- @param   to      (address) the receiver address
+-- @param   tokenId (str128) the non-fungible token to send
+-- @param   ...     (Optional) additional data, is sent unaltered in a call to 'nonFungibleReceived' on 'to'
+-- @return  value returned from the 'nonFungibleReceived' callback, or nil
+-- @event   transfer(from, to, tokenId, operator)
+function transferFrom(from, to, tokenId, ...)
+  _typecheck(from, 'address')
+  _typecheck(to, 'address')
+  _typecheck(tokenId, 'str128')
+
+  local token = _tokens[tokenId]
+  assert(token ~= nil, "ARC2: transferFrom - nonexisting token")
+
+  local owner = token["owner"]
+  assert(from == owner, "ARC2: transferFrom - token is not from account")
+
+  local operator = system.getSender()
+
+  -- if recallable, the creator/issuer can transfer the token
+  if extensions["mintable"] then
+    operator_can_recall = isMinter(operator)
+  else
+    operator_can_recall = (operator == _contract_owner:get())
+  end
+  local is_recall = (extensions["recallable"] or token["recallable"]) and operator_can_recall
+
+  if not is_recall then
+    assert(extensions["approval"], "ARC2: approval extension not included")
+    -- check allowance
+    assert(operator == token["approved"] or isApprovedForAll(owner, operator),
+           "ARC2: transferFrom - caller is not approved")
+    -- check if it is a non-transferable token
+    assert(extensions["non_transferable"] == nil and
+                token["non_transferable"] == nil, "ARC2: this token is non-transferable")
+  end
+
+  contract.event("transfer", from, to, tokenId, operator)
 
   return _transfer(from, to, tokenId, ...)
 end
 
 
+-- Token Enumeration Functions --
+
+
+-- Retrieves the next token in the contract
+-- @type    query
+-- @param   prev_index (integer) the index of the previous returned token. use `0` in the first call
+-- @return  (index, tokenId) the index of the next token and its token id, or `nil,nil` if no more tokens
 function nextToken(prev_index)
   _typecheck(prev_index, 'uint')
 
@@ -222,103 +316,52 @@ function nextToken(prev_index)
   local last_index = _last_index:get()
   local tokenId
 
-  if index >= last_index then
-    return nil, nil
-  end
-
-  do
+  while tokenId == nil and index < last_index do
     index = index + 1
     tokenId = _ids[tostring(index)]
-  while tokenId == nil and index < last_index
-
-  if index == last_index and tokenId == nil then
-    index = nil
   end
-
-  return index, tokenId
-end
-
--- retrieve the first token found that mathes the query
--- the query is a table that can contain these fields:
---   owner    - the owner of the token (address)
---   contains - check if the tokenId contains this string
---   pattern  - check if the tokenId matches this Lua regex pattern
--- the prev_index must be 0 in the first call
--- for the next calls, just inform the returned index from the last call
--- return value: 2 variables: index and tokenId
--- if no token is found with the given query, it returns (nil, nil)
-function findToken(query, prev_index)
-  _typecheck(query, 'table')
-  _typecheck(prev_index, 'uint')
-
-  local contains = query["contains"]
-  if contains then
-    query["pattern"] = escape(contains)
-  end
-
-  local index = prev_index
-  local last_index = _last_index:get()
-  local tokenId, owner
-
-  if index >= last_index then
-    return nil, nil
-  end
-
-  do
-    index = index + 1
-    tokenId = _ids[tostring(index)]
-    if not token_matches(tokenId, query) then
-      tokenId = nil
-    end
-  while tokenId == nil and index < last_index
-
-  if index == last_index and tokenId == nil then
-    index = nil
-  end
-
-  return index, tokenId
-end
-
-local function token_matches(tokenId, query)
 
   if tokenId == nil then
-    return false
+    index = nil
   end
 
-  local user = query["owner"]
-  local pattern = query["pattern"]
-
-  if user then
-    local owner = ownerOf(tokenId)
-    if owner ~= user then
-      return false
-    end
-  end
-
-  if pattern then
-    if not tokenId:match(pattern) then
-      return false
-    end
-  end
-
-  return true
+  return index, tokenId
 end
 
-local function escape(str)
-  return str:gsub("[%(%)%.%%%+%-%*%?%[%]%^%$]", function(c) return "%" .. c end)
+-- Retrieves the token from the given user at the given position
+-- @type    query
+-- @param   user      (address) ..
+-- @param   position  (integer) the position of the token in the incremental sequence
+-- @return  tokenId   (str128) the token id, or `nil` if no more tokens on this account
+function tokenFromUser(user, position)
+  _typecheck(user, 'address')
+  _typecheck(position, 'uint')
+
+  local list = _user_tokens[user] or {}
+  local index = list[position]
+  local tokenId = _ids[tostring(index)]
+  return tokenId
 end
 
 
--- returns a JSON string containing the list of ARC2 extensions
--- that were included on the contract
+function set_contract_owner(address)
+  assert(system.getSender() == _contract_owner:get(), "ARC2: permission denied")
+  _typecheck(address, "address")
+  _contract_owner:set(address)
+end
+
+
+-- Returns a JSON string containing the list of ARC2 extensions
+-- that were included on the contract.
+-- @type    query
 function arc2_extensions()
   local list = {}
   for name,_ in pairs(extensions) do
     table.insert(list, name)
   end
-  return json.encode(list)
+  return list
 end
 
 
-abi.register(transfer, arc2_extensions)
-abi.register_view(name, symbol, balanceOf, ownerOf, totalSupply, nextToken, findToken)
+abi.register(transfer, transferFrom, set_contract_owner)
+abi.register_view(name, symbol, balanceOf, ownerOf, totalSupply, nextToken, tokenFromUser, arc2_extensions)

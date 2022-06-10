@@ -2,10 +2,10 @@
 batch ./init.brick
 
 # deploy sample arc2 receiver contract and set arc2 contract id
-deploy contractOwner 0 receiverContract ../sample/arc2_receiver.lua `["AmgcK7ArJUGw8qsKAJvk9F1ZEP5uvD1hkVMmSrP6u4ZHUNocY1st"]`
+deploy contractOwner 0 receiverContract ../sample/arc2_receiver.lua `[]`
 
 # transfer NFT001 from contractOwner to sample arc2 receiver contract
-call contractOwner 0 tokenCtr safeTransferFrom `["Amga6g1TiZxcmcZPYuL3b4mrkB4o25wwahmrn6H3d5M8jXshdMik", "AmhPjFwFYy52JM52U3DW9V39g5LkdabbvmNTDQdVAEbPuiPjBBnn", "NFT001"]`
+call contractOwner 0 tokenCtr transfer `["AmhPjFwFYy52JM52U3DW9V39g5LkdabbvmNTDQdVAEbPuiPjBBnn", "NFT001"]`
 query tokenCtr ownerOf `["NFT001"]` `"AmhPjFwFYy52JM52U3DW9V39g5LkdabbvmNTDQdVAEbPuiPjBBnn"`
 
 # transfer back

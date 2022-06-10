@@ -1,0 +1,295 @@
+inject ac1 1000000000
+inject ac2 1000000000
+inject ac3 1000000000
+
+# ac1 = AmgMPiyZYr19kQ1kHFNiGenez1CRTBqNWqppj6gGZGEP6qszDGe1
+# ac2 = AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2
+# ac3 = Amh472hZcaLquvL4ZWoyVEYAoH3ZLAtMR2sw8xy9FnNBwhwF6Ktd
+
+deploy ac1 0 factory ../factory/output.lua
+
+call ac1 0 factory new_arc2_nft `["","",null,{"metadata": true, "mintable": true, "searchable":true}]`
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH arc2_extensions `[]` `["metadata","mintable","searchable"]`
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH totalSupply `[]` `0`
+
+# only minter can mint
+call ac2 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH mint `["AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2","1122",{"haha":123}]` `ARC2: only minter can mint`
+call ac3 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH mint `["AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2","1122",{"haha":123}]` `ARC2: only minter can mint`
+
+# mint a token with metadata
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH mint `["AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2","1122",{"haha":123}]`
+
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH totalSupply `[]` `1`
+
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH nextToken `[0]` `[1,"1122"]`
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH nextToken `[1]` `[null,null]`
+
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH tokenFromUser `["AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2",1]` `"1122"`
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH tokenFromUser `["AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2",2]` `null`
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH tokenFromUser `["AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2",0]` `null`
+
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH get_metadata `["1122"]` `{"haha":123,"index":1,"owner":"AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2"}`
+
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH make_metadata_immutable `[]` `invalid type: nil != string`
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH make_metadata_immutable `[""]` `ARC2: invalid key`
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH make_metadata_immutable `["index"]` `ARC2: reserved metadata`
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH make_metadata_immutable `["owner"]` `ARC2: reserved metadata`
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH make_metadata_immutable `["approved"]` `ARC2: reserved metadata`
+call ac2 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH make_metadata_immutable `["test"]` `ARC2: permission denied`
+
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH make_metadata_incremental `[]` `invalid type: nil != string`
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH make_metadata_incremental `[""]` `ARC2: invalid key`
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH make_metadata_incremental `["index"]` `ARC2: reserved metadata`
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH make_metadata_incremental `["owner"]` `ARC2: reserved metadata`
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH make_metadata_incremental `["approved"]` `ARC2: reserved metadata`
+call ac2 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH make_metadata_incremental `["test"]` `ARC2: permission denied`
+
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH set_metadata `["1122",{"index":10}]` `ARC2: reserved metadata`
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH set_metadata `["1122",{"owner":123}]` `ARC2: reserved metadata`
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH set_metadata `["1122",{"approved":"test"}]` `ARC2: reserved metadata`
+
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH make_metadata_immutable `["fixed"]`
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH make_metadata_incremental `["expiration"]`
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH get_metadata_info `[]` `{"expiration":"incremental","fixed":"immutable","index":"immutable"}`
+
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH set_metadata `["1122",{"fixed":10}]` `ARC2: immutable metadata`
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH set_metadata `["1122",{"expiration":100}]` `ARC2: incremental metadata`
+
+
+# mint a token with immutable and incremental metadata
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH mint `["AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2","1123",{"fixed":10,"expiration":100}]`
+
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH totalSupply `[]` `2`
+
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH nextToken `[0]` `[1,"1122"]`
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH nextToken `[1]` `[2,"1123"]`
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH nextToken `[2]` `[null,null]`
+
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH tokenFromUser `["AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2",1]` `"1122"`
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH tokenFromUser `["AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2",2]` `"1123"`
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH tokenFromUser `["AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2",3]` `null`
+
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH get_metadata `["1123"]` `{"expiration":100,"fixed":10,"index":2,"owner":"AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2"}`
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH set_metadata `["1123",{"test":"hello"}]`
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH get_metadata `["1123"]` `{"expiration":100,"fixed":10,"index":2,"owner":"AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2","test":"hello"}`
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH set_metadata `["1123",{"test":"updated","test2":"new"}]`
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH set_metadata `["1123",{"fixed":"should fail"}]` `ARC2: immutable metadata`
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH set_metadata `["1123",{"expiration":99}]` `ARC2: incremental metadata`
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH set_metadata `["1123",{"expiration":101}]`
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH get_metadata `["1123"]` `{"expiration":101,"fixed":10,"index":2,"owner":"AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2","test":"updated","test2":"new"}`
+
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH remove_metadata `["1123",["test","test2"]]`
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH get_metadata `["1123"]` `{"expiration":101,"fixed":10,"index":2,"owner":"AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2"}`
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH remove_metadata `["1123",["haha"]]`
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH get_metadata `["1123"]` `{"expiration":101,"fixed":10,"index":2,"owner":"AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2"}`
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH remove_metadata `["1123",["index"]]` `ARC2: reserved metadata`
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH remove_metadata `["1123",["owner"]]` `ARC2: reserved metadata`
+# call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH remove_metadata `["1123",["approved"]]` `ARC2: reserved metadata`
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH remove_metadata `["1123",["fixed"]]` `ARC2: immutable metadata`
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH remove_metadata `["1123",["expiration"]]` `ARC2: incremental metadata`
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH get_metadata `["1123"]` `{"expiration":101,"fixed":10,"index":2,"owner":"AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2"}`
+
+
+# test the searchable extension
+
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH findToken `[{"contains":"11"},0]` `[1,"1122"]`
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH findToken `[{"contains":"11"},1]` `[2,"1123"]`
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH findToken `[{"contains":"11"},2]` `[null,null]`
+
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH findToken `[{"owner":"AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2"},0]` `[1,"1122"]`
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH findToken `[{"owner":"AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2"},1]` `[2,"1123"]`
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH findToken `[{"owner":"AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2"},2]` `[null,null]`
+
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH findToken `[{"owner":"AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2","contains":"11"},0]` `[1,"1122"]`
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH findToken `[{"owner":"AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2","contains":"11"},1]` `[2,"1123"]`
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH findToken `[{"owner":"AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2","contains":"11"},2]` `[null,null]`
+
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH findToken `[{"metadata":{"expiration":{"op":">","value":100}}},0]` `[2,"1123"]`
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH findToken `[{"metadata":{"expiration":{"op":">","value":100}}},2]` `[null,null]`
+
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH findToken `[{"owner":"AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2","metadata":{"expiration":{"op":">","value":100}}},0]` `[2,"1123"]`
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH findToken `[{"owner":"AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2","metadata":{"expiration":{"op":">","value":100}}},2]` `[null,null]`
+
+
+
+# mint a non-transferable token
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH mint `["AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2","1133",{"haha":123,"fixed":100,"non_transferable":true}]`
+
+# check metadata
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH get_metadata `["1133"]` `{"fixed":100,"haha":123,"index":3,"non_transferable":true,"owner":"AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2"}`
+
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH nextToken `[0]` `[1,"1122"]`
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH nextToken `[1]` `[2,"1123"]`
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH nextToken `[2]` `[3,"1133"]`
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH nextToken `[3]` `[null,null]`
+
+# transfer by owner - should fail (non_transferable)
+call ac2 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH transfer `["Amh472hZcaLquvL4ZWoyVEYAoH3ZLAtMR2sw8xy9FnNBwhwF6Ktd","1133"]` `ARC2: this token is non-transferable`
+# contract creator - should fail
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH transfer `["Amh472hZcaLquvL4ZWoyVEYAoH3ZLAtMR2sw8xy9FnNBwhwF6Ktd","1133"]` `ARC2: this token is non-transferable`
+# transfer by third account - should fail
+call ac3 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH transfer `["Amh472hZcaLquvL4ZWoyVEYAoH3ZLAtMR2sw8xy9FnNBwhwF6Ktd","1133"]` `ARC2: this token is non-transferable`
+
+
+# mint a recallable token
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH mint `["AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2","1144",{"haha":123,"fixed":100,"recallable":true}]`
+# check metadata
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH get_metadata `["1144"]` `{"fixed":100,"haha":123,"index":4,"owner":"AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2","recallable":true}`
+
+# transfer by third account - should fail
+call ac3 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH transfer `["Amh472hZcaLquvL4ZWoyVEYAoH3ZLAtMR2sw8xy9FnNBwhwF6Ktd","1144"]` `ARC2: transfer of token that is not own`
+# contract creator - should fail (recallable but using transfer)
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH transfer `["Amh472hZcaLquvL4ZWoyVEYAoH3ZLAtMR2sw8xy9FnNBwhwF6Ktd","1144"]` `ARC2: transfer of token that is not own`
+# contract creator - should work (recallable using transferFrom)
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH transferFrom `["AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2","Amh472hZcaLquvL4ZWoyVEYAoH3ZLAtMR2sw8xy9FnNBwhwF6Ktd","1144"]`
+# transfer by previous owner - should fail (no more own)
+call ac2 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH transfer `["Amh472hZcaLquvL4ZWoyVEYAoH3ZLAtMR2sw8xy9FnNBwhwF6Ktd","1144"]` `ARC2: transfer of token that is not own`
+# transfer by another user - should fail (approval extension not included)
+call ac2 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH transferFrom `["Amh472hZcaLquvL4ZWoyVEYAoH3ZLAtMR2sw8xy9FnNBwhwF6Ktd","AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2","1144"]` `ARC2: approval extension not included`
+# transfer by owner - should work
+call ac3 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH transfer `["AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2","1144"]`
+
+
+# mint a recallable non-transferable token
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH mint `["AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2","1155",{"haha":123,"fixed":100,"non_transferable":true,"recallable":true}]`
+# check metadata
+query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH get_metadata `["1155"]` `{"fixed":100,"haha":123,"index":5,"non_transferable":true,"owner":"AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2","recallable":true}`
+
+# transfer by third account - should fail
+call ac3 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH transfer `["Amh472hZcaLquvL4ZWoyVEYAoH3ZLAtMR2sw8xy9FnNBwhwF6Ktd","1155"]` `ARC2: this token is non-transferable`
+# transfer by owner - should fail (non_transferable)
+call ac2 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH transfer `["Amh472hZcaLquvL4ZWoyVEYAoH3ZLAtMR2sw8xy9FnNBwhwF6Ktd","1155"]` `ARC2: this token is non-transferable`
+# transferFrom by third account - should fail
+call ac3 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH transferFrom `["AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2","Amh472hZcaLquvL4ZWoyVEYAoH3ZLAtMR2sw8xy9FnNBwhwF6Ktd","1155"]` `ARC2: approval extension not included`
+# transferFrom by owner - should fail
+call ac2 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH transferFrom `["AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2","Amh472hZcaLquvL4ZWoyVEYAoH3ZLAtMR2sw8xy9FnNBwhwF6Ktd","1155"]` `ARC2: approval extension not included`
+# contract creator - should fail (recallable but using transfer)
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH transfer `["Amh472hZcaLquvL4ZWoyVEYAoH3ZLAtMR2sw8xy9FnNBwhwF6Ktd","1155"]` `ARC2: this token is non-transferable`
+# contract creator - should work (recallable using transferFrom)
+call ac1 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH transferFrom `["AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2","Amh472hZcaLquvL4ZWoyVEYAoH3ZLAtMR2sw8xy9FnNBwhwF6Ktd","1155"]`
+
+# burn by third account - should fail
+call ac3 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH burn `["1155"]` `not found function: burn`
+# burn by owner - should fail (non_transferable)
+call ac2 0 Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH burn `["1155"]` `not found function: burn`
+
+
+
+# ====================================================
+# BURNABLE CONTRACT
+# AmgNnnCxGRjDjRgmfCWbB4uxL1nAihQX79yNJJqxcA9d75NLPWmj
+
+call ac1 0 factory new_arc2_nft `["","",null,{"metadata": true, "mintable": true, "burnable": true, "searchable": true}]`
+
+call ac1 0 AmgNnnCxGRjDjRgmfCWbB4uxL1nAihQX79yNJJqxcA9d75NLPWmj mint `["AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2","token01"]`
+
+query AmgNnnCxGRjDjRgmfCWbB4uxL1nAihQX79yNJJqxcA9d75NLPWmj totalSupply `[]` 1
+query AmgNnnCxGRjDjRgmfCWbB4uxL1nAihQX79yNJJqxcA9d75NLPWmj balanceOf `["AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2"]` 1
+query AmgNnnCxGRjDjRgmfCWbB4uxL1nAihQX79yNJJqxcA9d75NLPWmj ownerOf `["token01"]` "AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2"
+
+call ac1 0 AmgNnnCxGRjDjRgmfCWbB4uxL1nAihQX79yNJJqxcA9d75NLPWmj burn `["token01"]` `ARC2: cannot burn a token that is not own`
+call ac2 0 AmgNnnCxGRjDjRgmfCWbB4uxL1nAihQX79yNJJqxcA9d75NLPWmj burn `["token01"]`
+
+query AmgNnnCxGRjDjRgmfCWbB4uxL1nAihQX79yNJJqxcA9d75NLPWmj totalSupply `[]` 0
+query AmgNnnCxGRjDjRgmfCWbB4uxL1nAihQX79yNJJqxcA9d75NLPWmj balanceOf `["AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2"]` 0
+query AmgNnnCxGRjDjRgmfCWbB4uxL1nAihQX79yNJJqxcA9d75NLPWmj ownerOf `["token01"]` null
+query AmgNnnCxGRjDjRgmfCWbB4uxL1nAihQX79yNJJqxcA9d75NLPWmj get_metadata `["token01"]` `null` `ARC2: nonexisting token`
+
+
+
+# ====================================================
+# RECALLABLE CONTRACT
+# AmgeSTZe86icyAwpVgoyTwvU1iRNWXpgfqLZcJTkrUhAmDLpo1kV
+
+call ac1 0 factory new_arc2_nft `["","",null,{"metadata": true, "mintable": true, "searchable":true, "recallable":true}]`
+
+call ac1 0 AmgeSTZe86icyAwpVgoyTwvU1iRNWXpgfqLZcJTkrUhAmDLpo1kV mint `["AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2","token01"]`
+
+query AmgeSTZe86icyAwpVgoyTwvU1iRNWXpgfqLZcJTkrUhAmDLpo1kV totalSupply `[]` 1
+query AmgeSTZe86icyAwpVgoyTwvU1iRNWXpgfqLZcJTkrUhAmDLpo1kV balanceOf `["AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2"]` 1
+query AmgeSTZe86icyAwpVgoyTwvU1iRNWXpgfqLZcJTkrUhAmDLpo1kV ownerOf `["token01"]` "AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2"
+
+# transfer by third account - should fail
+call ac3 0 AmgeSTZe86icyAwpVgoyTwvU1iRNWXpgfqLZcJTkrUhAmDLpo1kV transfer `["Amh472hZcaLquvL4ZWoyVEYAoH3ZLAtMR2sw8xy9FnNBwhwF6Ktd","token01"]` `ARC2: transfer of token that is not own`
+# contract creator - should fail (recallable but using transfer)
+call ac1 0 AmgeSTZe86icyAwpVgoyTwvU1iRNWXpgfqLZcJTkrUhAmDLpo1kV transfer `["Amh472hZcaLquvL4ZWoyVEYAoH3ZLAtMR2sw8xy9FnNBwhwF6Ktd","token01"]` `ARC2: transfer of token that is not own`
+# contract creator - should work (recallable using transferFrom)
+call ac1 0 AmgeSTZe86icyAwpVgoyTwvU1iRNWXpgfqLZcJTkrUhAmDLpo1kV transferFrom `["AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2","Amh472hZcaLquvL4ZWoyVEYAoH3ZLAtMR2sw8xy9FnNBwhwF6Ktd","token01"]`
+# transfer by previous owner - should fail (no more own)
+call ac2 0 AmgeSTZe86icyAwpVgoyTwvU1iRNWXpgfqLZcJTkrUhAmDLpo1kV transfer `["Amh472hZcaLquvL4ZWoyVEYAoH3ZLAtMR2sw8xy9FnNBwhwF6Ktd","token01"]` `ARC2: transfer of token that is not own`
+# transfer by another user - should fail (approval extension not included)
+call ac2 0 AmgeSTZe86icyAwpVgoyTwvU1iRNWXpgfqLZcJTkrUhAmDLpo1kV transferFrom `["Amh472hZcaLquvL4ZWoyVEYAoH3ZLAtMR2sw8xy9FnNBwhwF6Ktd","AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2","token01"]` `ARC2: approval extension not included`
+# transfer by owner - should work
+call ac3 0 AmgeSTZe86icyAwpVgoyTwvU1iRNWXpgfqLZcJTkrUhAmDLpo1kV transfer `["AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2","token01"]`
+
+
+
+
+# ====================================================
+# NON-TRANSFERABLE CONTRACT
+# Amhqv3gVvc1h2QHjAPUvEAtKo4fGAZszTMG1nqoh7EFL867414v6
+
+call ac1 0 factory new_arc2_nft `["","",null,{"metadata": true, "mintable": true, "searchable":true, "non_transferable":true}]`
+
+call ac1 0 Amhqv3gVvc1h2QHjAPUvEAtKo4fGAZszTMG1nqoh7EFL867414v6 mint `["AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2","token01"]`
+
+query Amhqv3gVvc1h2QHjAPUvEAtKo4fGAZszTMG1nqoh7EFL867414v6 totalSupply `[]` 1
+query Amhqv3gVvc1h2QHjAPUvEAtKo4fGAZszTMG1nqoh7EFL867414v6 balanceOf `["AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2"]` 1
+query Amhqv3gVvc1h2QHjAPUvEAtKo4fGAZszTMG1nqoh7EFL867414v6 ownerOf `["token01"]` "AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2"
+
+# transfer by owner - should fail (non_transferable)
+call ac2 0 Amhqv3gVvc1h2QHjAPUvEAtKo4fGAZszTMG1nqoh7EFL867414v6 transfer `["Amh472hZcaLquvL4ZWoyVEYAoH3ZLAtMR2sw8xy9FnNBwhwF6Ktd","token01"]` `ARC2: this token is non-transferable`
+# contract creator - should fail
+call ac1 0 Amhqv3gVvc1h2QHjAPUvEAtKo4fGAZszTMG1nqoh7EFL867414v6 transfer `["Amh472hZcaLquvL4ZWoyVEYAoH3ZLAtMR2sw8xy9FnNBwhwF6Ktd","token01"]` `ARC2: this token is non-transferable`
+# transfer by third account - should fail
+call ac3 0 Amhqv3gVvc1h2QHjAPUvEAtKo4fGAZszTMG1nqoh7EFL867414v6 transfer `["Amh472hZcaLquvL4ZWoyVEYAoH3ZLAtMR2sw8xy9FnNBwhwF6Ktd","token01"]` `ARC2: this token is non-transferable`
+
+query Amhqv3gVvc1h2QHjAPUvEAtKo4fGAZszTMG1nqoh7EFL867414v6 ownerOf `["token01"]` "AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2"
+
+
+
+# ====================================================
+# NON-TRANSFERABLE AND RECALLABLE CONTRACT
+# AmgCUU2wS6sMMXE6ZjpkEG9UaQjwSbs5eFM321C7iJbooXNe6XPA
+
+call ac1 0 factory new_arc2_nft `["","",null,{"metadata": true, "mintable": true, "searchable":true, "non_transferable":true, "recallable":true}]`
+
+call ac1 0 AmgCUU2wS6sMMXE6ZjpkEG9UaQjwSbs5eFM321C7iJbooXNe6XPA mint `["AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2","token01"]`
+
+query AmgCUU2wS6sMMXE6ZjpkEG9UaQjwSbs5eFM321C7iJbooXNe6XPA totalSupply `[]` 1
+query AmgCUU2wS6sMMXE6ZjpkEG9UaQjwSbs5eFM321C7iJbooXNe6XPA balanceOf `["AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2"]` 1
+query AmgCUU2wS6sMMXE6ZjpkEG9UaQjwSbs5eFM321C7iJbooXNe6XPA ownerOf `["token01"]` "AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2"
+
+# transfer by third account - should fail
+call ac3 0 AmgCUU2wS6sMMXE6ZjpkEG9UaQjwSbs5eFM321C7iJbooXNe6XPA transfer `["Amh472hZcaLquvL4ZWoyVEYAoH3ZLAtMR2sw8xy9FnNBwhwF6Ktd","token01"]` `ARC2: this token is non-transferable`
+# transfer by owner - should fail (non_transferable)
+call ac2 0 AmgCUU2wS6sMMXE6ZjpkEG9UaQjwSbs5eFM321C7iJbooXNe6XPA transfer `["Amh472hZcaLquvL4ZWoyVEYAoH3ZLAtMR2sw8xy9FnNBwhwF6Ktd","token01"]` `ARC2: this token is non-transferable`
+# transferFrom by third account - should fail
+call ac3 0 AmgCUU2wS6sMMXE6ZjpkEG9UaQjwSbs5eFM321C7iJbooXNe6XPA transferFrom `["AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2","Amh472hZcaLquvL4ZWoyVEYAoH3ZLAtMR2sw8xy9FnNBwhwF6Ktd","token01"]` `ARC2: approval extension not included`
+# transferFrom by owner - should fail
+call ac2 0 AmgCUU2wS6sMMXE6ZjpkEG9UaQjwSbs5eFM321C7iJbooXNe6XPA transferFrom `["AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2","Amh472hZcaLquvL4ZWoyVEYAoH3ZLAtMR2sw8xy9FnNBwhwF6Ktd","token01"]` `ARC2: approval extension not included`
+# contract creator - should fail (recallable but using transfer)
+call ac1 0 AmgCUU2wS6sMMXE6ZjpkEG9UaQjwSbs5eFM321C7iJbooXNe6XPA transfer `["Amh472hZcaLquvL4ZWoyVEYAoH3ZLAtMR2sw8xy9FnNBwhwF6Ktd","token01"]` `ARC2: this token is non-transferable`
+query AmgCUU2wS6sMMXE6ZjpkEG9UaQjwSbs5eFM321C7iJbooXNe6XPA ownerOf `["token01"]` "AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2"
+# contract creator - should work (recallable using transferFrom)
+call ac1 0 AmgCUU2wS6sMMXE6ZjpkEG9UaQjwSbs5eFM321C7iJbooXNe6XPA transferFrom `["AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2","Amh472hZcaLquvL4ZWoyVEYAoH3ZLAtMR2sw8xy9FnNBwhwF6Ktd","token01"]`
+
+query AmgCUU2wS6sMMXE6ZjpkEG9UaQjwSbs5eFM321C7iJbooXNe6XPA ownerOf `["token01"]` "Amh472hZcaLquvL4ZWoyVEYAoH3ZLAtMR2sw8xy9FnNBwhwF6Ktd"
+
+
+
+
+# mintable - max-supply
+
+
+# no mintable (only initial supply)
+
+
+# approval
+
+
+# pausable
+
+
+# blacklist
+

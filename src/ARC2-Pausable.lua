@@ -6,12 +6,10 @@
 extensions["pausable"] = true
 
 state.var {
-  -- pausable
-  _pauser = state.map(),   -- address -> boolean
+  _pauser = state.map()    -- address -> boolean
 }
 
-
--- Indicate an account has the Pauser Role
+-- Indicate whether an account has the pauser role
 -- @type    query
 -- @param   account  (address)
 -- @return  (bool) true/false
@@ -19,11 +17,10 @@ state.var {
 function isPauser(account)
   _typecheck(account, 'address')
 
-  return (account == system.getCreator()) or (_pauser[account]==true)
+  return (account == _contract_owner:get()) or (_pauser[account] == true)
 end
 
-
--- Grant the Pauser Role to an account
+-- Grant the pauser role to an account
 -- @type    call
 -- @param   account  (address)
 -- @event   addPauser(account)
@@ -31,15 +28,14 @@ end
 function addPauser(account)
   _typecheck(account, 'address')
 
-  assert(system.getSender() == system.getCreator(), "ARC2: only contract owner can approve pauser role")
+  assert(system.getSender() == _contract_owner:get(), "ARC2: only contract owner can grant pauser role")
 
   _pauser[account] = true
 
   contract.event("addPauser", account)
 end
 
-
--- Removes the Pauser Role form an account
+-- Removes the pauser role from an account
 -- @type    call
 -- @param   account  (address)
 -- @event   removePauser(account)
@@ -47,30 +43,29 @@ end
 function removePauser(account)
   _typecheck(account, 'address')
 
-  assert(system.getSender() == system.getCreator(), "ARC2: only owner can remove pauser role")
-  assert(isPauser(account), "ARC2: only pauser can be removed pauser role")
+  assert(system.getSender() == _contract_owner:get(), "ARC2: only owner can remove pauser role")
+  assert(_pauser[account] == true, "ARC2: account does not have pauser role")
 
   _pauser[account] = nil
 
   contract.event("removePauser", account)
 end
 
-
--- Renounce the graned Pauser Role of TX sender
+-- Renounce the granted pauser role
 -- @type    call
--- @event   removePauser(TX sender)
+-- @event   removePauser(account)
 
 function renouncePauser()
-  assert(system.getSender() ~= system.getCreator(), "ARC2: owner can't renounce pauser role")
-  assert(isPauser(system.getSender()), "ARC2: only pauser can renounce pauser role")
+  local sender = system.getSender()
+  assert(sender ~= _contract_owner:get(), "ARC2: owner can't renounce pauser role")
+  assert(_pauser[sender] == true, "ARC2: account does not have pauser role")
 
-  _pauser[system.getSender()] = nil
+  _pauser[sender] = nil
 
-  contract.event("removePauser", system.getSender())
+  contract.event("removePauser", sender)
 end
 
-
--- Indecate if the contract is paused
+-- Indicate if the contract is paused
 -- @type    query
 -- @return  (bool) true/false
 
@@ -78,32 +73,32 @@ function paused()
   return (_paused:get() == true)
 end
 
-
--- Trigger stopped state
+-- Put the contract in a paused state
 -- @type    call
--- @event   pause(TX sender)
+-- @event   pause(caller)
 
 function pause()
+  local sender = system.getSender()
   assert(not _paused:get(), "ARC2: contract is paused")
-  assert(isPauser(system.getSender()), "ARC2: only pauser can pause")
+  assert(isPauser(sender), "ARC2: only pauser can pause")
 
   _paused:set(true)
 
-  contract.event("pause", system.getSender())
+  contract.event("pause", sender)
 end
 
-
--- Return to normal state
+-- Return the contract to the normal state
 -- @type    call
--- @event   unpause(TX sender)
+-- @event   unpause(caller)
 
 function unpause()
+  local sender = system.getSender()
   assert(_paused:get(), "ARC2: contract is unpaused")
-  assert(isPauser(system.getSender()), "ARC2: only pauser can unpause")
+  assert(isPauser(sender), "ARC2: only pauser can unpause")
 
   _paused:set(false)
 
-  contract.event("unpause", system.getSender())
+  contract.event("unpause", sender)
 end
 
 

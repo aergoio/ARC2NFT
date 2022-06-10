@@ -1,0 +1,16 @@
+set -e
+
+cd ../sample
+./build.sh
+cd -
+# brick testall.brick
+brick mint.brick
+brick burn.brick
+brick transfer.brick
+brick approve.brick
+brick receiver.brick
+
+cd ../factory
+./build.sh
+cd -
+brick test_factory.brick
