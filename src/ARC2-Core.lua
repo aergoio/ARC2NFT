@@ -4,6 +4,8 @@
 
 extensions = {}
 
+address0 = '1111111111111111111111111111111111111111111111111111'
+
 -- A internal type check function
 -- @type internal
 -- @param x variable to check
@@ -13,9 +15,11 @@ local function _typecheck(x, t)
     assert(type(x) == 'string', "address must be string type")
     -- check address length
     assert(52 == #x, string.format("invalid address length: %s (%s)", x, #x))
-    -- check character
-    local invalidChar = string.match(x, '[^123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]')
-    assert(nil == invalidChar, string.format("invalid address format: %s contains invalid char %s", x, invalidChar or 'nil'))
+    -- check address checksum
+    if x ~= address0 then
+      local success = pcall(system.isContract, x)
+      assert(success, "invalid address: " .. x)
+    end
   elseif (x and t == 'str128') then
     assert(type(x) == 'string', "str128 must be string type")
     -- check address length
@@ -30,8 +34,6 @@ local function _typecheck(x, t)
     assert(type(x) == t, string.format("invalid type: %s != %s", type(x), t or 'nil'))
   end
 end
-
-address0 = '1111111111111111111111111111111111111111111111111111'
 
 
 state.var {
