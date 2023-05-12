@@ -24,7 +24,7 @@ end
 -- @return  (bool) true/false
 
 function isMinter(account)
-  _typecheck(account, 'address')
+  account = _typecheck(account, 'address')
 
   return (account == _contract_owner:get()) or (_minter[account] == true)
 end
@@ -35,7 +35,7 @@ end
 -- @event   addMinter(account)
 
 function addMinter(account)
-  _typecheck(account, 'address')
+  account = _typecheck(account, 'address')
 
   local creator = _contract_owner:get()
   assert(system.getSender() == creator, "ARC2: only the contract owner can add a minter")
@@ -52,7 +52,7 @@ end
 -- @event   removeMinter(account)
 
 function removeMinter(account)
-  _typecheck(account, 'address')
+  account = _typecheck(account, 'address')
 
   local creator = _contract_owner:get()
   assert(system.getSender() == creator, "ARC2: only the contract owner can remove a minter")

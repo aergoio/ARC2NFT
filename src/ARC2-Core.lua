@@ -11,20 +11,25 @@ address0 = '1111111111111111111111111111111111111111111111111111'
 -- @param x variable to check
 -- @param t (string) expected type
 local function _typecheck(x, t)
-  if (x and t == 'address') then
-    assert(type(x) == 'string', "address must be string type")
+  if (t == 'address') then
+    assert(type(x) == 'string', "address must be a string")
     -- check address length
-    assert(52 == #x, string.format("invalid address length: %s (%s)", x, #x))
-    -- check address checksum
-    if x ~= address0 then
-      local success = pcall(system.isContract, x)
-      assert(success, "invalid address: " .. x)
+    if #x == 52 then
+      -- check address checksum
+      if x ~= address0 then
+        local success = pcall(system.isContract, x)
+        assert(success, "invalid address: " .. x)
+      end
+    else
+      x = name_service.resolve(x)
+      assert(#x == 52, "invalid address: " .. x)
     end
-  elseif (x and t == 'str128') then
+    return x
+  elseif (t == 'str128') then
     assert(type(x) == 'string', "str128 must be string type")
     -- check address length
     assert(#x <= 128, string.format("too long str128 length: %s", #x))
-  elseif (x and t == 'uint') then
+  elseif (t == 'uint') then
     -- check unsigned integer
     assert(type(x) == 'number', string.format("invalid type: %s != number", type(x)))
     assert(math.floor(x) == x, "the number must be an integer")
@@ -66,7 +71,7 @@ local function _init(name, symbol, owner)
   elseif owner == 'none' then
     owner = nil
   else
-    _typecheck(owner, "address")
+    owner = _typecheck(owner, 'address')
   end
   _contract_owner:set(owner)
 
@@ -158,7 +163,7 @@ end
 
 
 local function _mint(to, tokenId, metadata, ...)
-  _typecheck(to, 'address')
+  to = _typecheck(to, 'address')
   _typecheck(tokenId, 'str128')
 
   assert(not _paused:get(), "ARC2: paused contract")
@@ -241,7 +246,7 @@ end
 -- @return  value returned from the 'nonFungibleReceived' callback, or nil
 -- @event   transfer(from, to, tokenId)
 function transfer(to, tokenId, ...)
-  _typecheck(to, 'address')
+  to = _typecheck(to, 'address')
   _typecheck(tokenId, 'str128')
 
   local token = _tokens[tokenId]
@@ -268,8 +273,8 @@ end
 -- @return  value returned from the 'nonFungibleReceived' callback, or nil
 -- @event   transfer(from, to, tokenId, operator)
 function transferFrom(from, to, tokenId, ...)
-  _typecheck(from, 'address')
-  _typecheck(to, 'address')
+  from = _typecheck(from, 'address')
+  to = _typecheck(to, 'address')
   _typecheck(tokenId, 'str128')
 
   local token = _tokens[tokenId]
@@ -336,7 +341,7 @@ end
 -- @param   position  (integer) the position of the token in the incremental sequence
 -- @return  tokenId   (str128) the token id, or `nil` if no more tokens on this account
 function tokenFromUser(user, position)
-  _typecheck(user, 'address')
+  user = _typecheck(user, 'address')
   _typecheck(position, 'uint')
 
   local list = _user_tokens[user] or {}
@@ -348,7 +353,7 @@ end
 
 function set_contract_owner(address)
   assert(system.getSender() == _contract_owner:get(), "ARC2: permission denied")
-  _typecheck(address, "address")
+  address = _typecheck(address, 'address')
   _contract_owner:set(address)
 end
 

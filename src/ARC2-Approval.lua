@@ -17,7 +17,7 @@ state.var {
 function approve(operator, tokenId)
   _typecheck(tokenId, 'str128')
   if operator ~= nil then
-    _typecheck(operator, 'address')
+    operator = _typecheck(operator, 'address')
   end
 
   local token = _tokens[tokenId]
@@ -58,7 +58,7 @@ end
 -- @param   approved  (boolean) true if the operator is approved, false to revoke approval
 -- @event   approvalForAll(owner, operator, approved)
 function setApprovalForAll(operator, approved)
-  _typecheck(operator, 'address')
+  operator = _typecheck(operator, 'address')
   _typecheck(approved, 'boolean')
 
   local owner = system.getSender()

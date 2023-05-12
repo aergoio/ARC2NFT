@@ -14,7 +14,7 @@ function addToBlacklist(account_list)
   assert(system.getSender() == _contract_owner:get(), "ARC2: only owner can blacklist accounts")
 
   for i = 1, #account_list do
-    _typecheck(account_list[i], 'address')
+    account_list[i] = _typecheck(account_list[i], 'address')
     _blacklist[account_list[i]] = true
   end
 
@@ -30,7 +30,7 @@ function removeFromBlacklist(account_list)
   assert(system.getSender() == _contract_owner:get(), "ARC2: only owner can blacklist accounts")
 
   for i = 1, #account_list do
-    _typecheck(account_list[i], 'address')
+    account_list[i] = _typecheck(account_list[i], 'address')
     _blacklist[account_list[i]] = nil
   end
 
@@ -43,7 +43,7 @@ end
 -- @return  (bool) true/false
 
 function isOnBlacklist(account)
-  _typecheck(account, 'address')
+  account = _typecheck(account, 'address')
 
   return _blacklist[account] == true
 end
