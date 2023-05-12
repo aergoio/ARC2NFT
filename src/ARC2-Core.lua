@@ -12,31 +12,31 @@ address0 = '1111111111111111111111111111111111111111111111111111'
 -- @param t (string) expected type
 local function _typecheck(x, t)
   if (t == 'address') then
-    assert(type(x) == 'string', "address must be a string")
+    assert(type(x) == 'string', "ARC2: address must be a string")
     -- check address length
     if #x == 52 then
       -- check address checksum
       if x ~= address0 then
         local success = pcall(system.isContract, x)
-        assert(success, "invalid address: " .. x)
+        assert(success, "ARC2: invalid address: " .. x)
       end
     else
       x = name_service.resolve(x)
-      assert(#x == 52, "invalid address: " .. x)
+      assert(#x == 52, "ARC2: invalid address: " .. x)
     end
     return x
   elseif (t == 'str128') then
-    assert(type(x) == 'string', "str128 must be string type")
+    assert(type(x) == 'string', "ARC2: str128 must be a string")
     -- check address length
-    assert(#x <= 128, string.format("too long str128 length: %s", #x))
+    assert(#x <= 128, string.format("ARC2: too long str128 length: %s", #x))
   elseif (t == 'uint') then
     -- check unsigned integer
-    assert(type(x) == 'number', string.format("invalid type: %s != number", type(x)))
-    assert(math.floor(x) == x, "the number must be an integer")
-    assert(x >= 0, "the number must be 0 or positive")
+    assert(type(x) == 'number', string.format("ARC2: invalid type: %s != number", type(x)))
+    assert(math.floor(x) == x, "ARC2: the number must be an integer")
+    assert(x >= 0, "ARC2: the number must be 0 or positive")
   else
     -- check default lua types
-    assert(type(x) == t, string.format("invalid type: %s != %s", type(x), t or 'nil'))
+    assert(type(x) == t, string.format("ARC2: invalid type: %s != %s", type(x), t or 'nil'))
   end
 end
 
