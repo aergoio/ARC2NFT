@@ -10,8 +10,8 @@ inject user1 10000000000000000
 # user2 = Amgg1jWymSuHjNQQ1Z7DT91rDeRUqy7ac6VGAphDrtraeXmWtXLA
 inject user2 10000000000000000
 
-# initialize contract
 # deploy token contract
+# tokenCtr = AmgcK7ArJUGw8qsKAJvk9F1ZEP5uvD1hkVMmSrP6u4ZHUNocY1st
 deploy contractOwner 0 tokenCtr ../sample/output.lua
 
 query tokenCtr name  `[]` `"test_nft"`

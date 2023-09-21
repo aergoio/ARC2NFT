@@ -1,6 +1,7 @@
 set -e
 
 cd ../sample
+echo "Building sample token contracts..."
 ./build.sh
 cd -
 # brick testall.brick
@@ -11,6 +12,7 @@ brick approve.brick
 brick receiver.brick
 
 cd ../factory
+echo "Building token factory..."
 ./build.sh
 cd -
 brick test_factory.brick
