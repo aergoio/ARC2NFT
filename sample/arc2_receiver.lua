@@ -12,12 +12,12 @@ function nonFungibleReceived(operator, from, tokenId, ...)
 end
 
 function add_accepted_token(address)
-  assert(system.getSender() = system.getCreator(), "permission denied")
+  assert(system.getSender() == system.getCreator(), "permission denied")
   accepted_tokens[address] = true
 end
 
 function transferARC2(contractId, to, tokenId, ...)
-  assert(system.getSender() = system.getCreator(), "permission denied")
+  assert(system.getSender() == system.getCreator(), "permission denied")
   contract.call(contractId, "transfer", to, tokenId, ...)
 end
 
