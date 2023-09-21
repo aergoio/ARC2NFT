@@ -556,7 +556,15 @@ Check instructions bellow for usage and examples
 
 ### Hook
 
-Contracts that want to handle tokens must implement the following function to define how to handle the tokens they receive. If this function is not implemented, the token transfer will fail. Therefore, it is possible to prevent the token from being lost.
+This function is required to receive ARC2 non-fungible tokens
+
+Contracts that want to receive non-fungible tokens must implement the following function in order to receive them.
+In most cases it also means that your contract must have methods to transfer these tokens.
+
+If your contract is not intended to handle non-fungible tokens, then do not add this function. In this case any
+attempt to transfer a NFT to your contract will fail (as expected).
+
+This function can also be used to define how to handle the tokens they receive.
 
 ``` lua
 -- The ARC2 smart contract calls this function on the recipient contract after a 'transfer' or 'mint'
@@ -565,8 +573,22 @@ Contracts that want to handle tokens must implement the following function to de
 -- @param   from        (address) the sender's address (nil if being minted)
 -- @param   tokenId     (str128)  the non-fungible token id
 -- @param   ...         additional data, by-passed from 'transfer' or 'mint' arguments
-function nonFungibleReceived(operator, from, tokenId, ...) end
+function nonFungibleReceived(operator, from, tokenId, ...)
+  -- do nothing
+end
 ```
+
+> :warning: **ATTENTION:** anyone can call this function! :warning:
+> 
+> Do NOT assume a token was received just because this function was called!
+
+If a token was really sent, we can get the token contract address with:
+
+```lua
+local token_contract = system.getSender()
+```
+
+But on most cases the function can be empty.
 
 
 ### List and Find Tokens
