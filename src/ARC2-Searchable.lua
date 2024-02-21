@@ -90,7 +90,7 @@ function findToken(query, prev_index)
 
     for position=prev_index+1, count do
       local tokenIndex = _owner_tokens[owner][tostring(position)]
-      tokenId = _ids[tostring(tokenIndex)]
+      tokenId = _ids[tokenIndex]
       if token_matches(tokenId, query) then
         index = position
         break
@@ -106,7 +106,7 @@ function findToken(query, prev_index)
 
     while tokenId == nil and index < last_index do
       index = index + 1
-      tokenId = _ids[tostring(index)]
+      tokenId = _ids[index]
       if not token_matches(tokenId, query) then
         tokenId = nil
       end

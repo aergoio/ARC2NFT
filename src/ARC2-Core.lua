@@ -172,7 +172,7 @@ local function _mint(to, tokenId, metadata, ...)
 
   local index = _last_index:get() + 1
   _last_index:set(index)
-  _ids[tostring(index)] = tokenId
+  _ids[index] = tokenId
 
   local token = {
     index = index,
@@ -206,7 +206,7 @@ local function _burn(tokenId)
   assert(not _paused:get(), "ARC2: paused contract")
   assert(not _blacklist[owner], "ARC2: owner is on blacklist")
 
-  _ids:delete(tostring(index))
+  _ids:delete(index)
 
   _tokens:delete(tokenId)
 
@@ -323,7 +323,7 @@ function nextToken(prev_index)
 
   while tokenId == nil and index < last_index do
     index = index + 1
-    tokenId = _ids[tostring(index)]
+    tokenId = _ids[index]
   end
 
   if tokenId == nil then
@@ -343,12 +343,12 @@ function tokenFromUser(user, position)
   _typecheck(position, 'uint')
 
   local count = _owner_token_count[user] or 0
-  if position > count then
+  if position == 0 or position > count then
     return nil
   end
 
   local index = _owner_tokens[user][tostring(position)]
-  local tokenId = _ids[tostring(index)]
+  local tokenId = _ids[index]
   return tokenId
 end
 
