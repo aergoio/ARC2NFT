@@ -46,7 +46,11 @@ state.var {
   _last_index = state.value(),      -- integer
   _ids = state.map(),               -- integer -> str128
   _tokens = state.map(),            -- str128 -> { index: integer, owner: address, approved: address }
-  _user_tokens = state.map(),       -- address -> array of integers (index to tokenId)
+
+  -- Owner List / Enumerable
+  _owner_token_count = state.map(), -- address -> integer
+  _owner_tokens = state.map(2),     -- address, integer -> integer (index to tokenId)
+  _owner_token_position = state.map(), -- integer -> integer
 
   -- Pausable
   _paused = state.value(),          -- boolean
@@ -117,8 +121,7 @@ end
 -- @param   owner  (address) a target address
 -- @return  (integer) the number of non-fungible tokens of owner
 function balanceOf(owner)
-  local list = _user_tokens[owner] or {}
-  return #list
+  return _owner_token_count[owner] or 0
 end
 
 -- Find the owner of an NFT
@@ -136,24 +139,24 @@ end
 
 
 local function add_to_owner(index, owner)
-  local list = _user_tokens[owner] or {}
-  table.insert(list, index)
-  _user_tokens[owner] = list
+  local count = _owner_token_count[owner] or 0
+  count = count + 1
+  _owner_token_count[owner] = count
+  _owner_tokens[owner][tostring(count)] = index
+  _owner_token_position[index] = count
 end
 
 local function remove_from_owner(index, owner)
-  local list = _user_tokens[owner] or {}
-  for position,value in ipairs(list) do
-    if value == index then
-      table.remove(list, position)
-      break
-    end
+  local position = _owner_token_position[index]
+  local count = _owner_token_count[owner]
+
+  if position < count then
+    local lastToken = _owner_tokens[owner][tostring(count)]
+    _owner_tokens[owner][tostring(position)] = lastToken
+    _owner_token_position[lastToken] = position
   end
-  if #list > 0 then
-    _user_tokens[owner] = list
-  else
-    _user_tokens:delete(owner)
-  end
+
+  _owner_token_count[owner] = count - 1
 end
 
 
@@ -339,8 +342,12 @@ function tokenFromUser(user, position)
   _typecheck(user, 'address')
   _typecheck(position, 'uint')
 
-  local list = _user_tokens[user] or {}
-  local index = list[position]
+  local count = _owner_token_count[user] or 0
+  if position > count then
+    return nil
+  end
+
+  local index = _owner_tokens[user][tostring(position)]
   local tokenId = _ids[tostring(index)]
   return tokenId
 end

@@ -86,20 +86,16 @@ function findToken(query, prev_index)
 
   if owner then
     -- iterate over the tokens from this user
-    local list = _user_tokens[owner] or {}
-    local check_tokens = (prev_index == 0)
+    local count = _owner_token_count[owner] or 0
 
-    for position,index2 in ipairs(list) do
-      if check_tokens then
-        tokenId = _ids[tostring(index2)]
-        if token_matches(tokenId, query) then
-          index = index2
-          break
-        else
-          tokenId = nil
-        end
-      elseif index2 == prev_index then
-        check_tokens = true
+    for position=prev_index+1, count do
+      local tokenIndex = _owner_tokens[owner][tostring(position)]
+      tokenId = _ids[tostring(tokenIndex)]
+      if token_matches(tokenId, query) then
+        index = position
+        break
+      else
+        tokenId = nil
       end
     end
 
