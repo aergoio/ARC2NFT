@@ -309,15 +309,17 @@ The `enumerable` functions:
 -- Retrieves the next token in the contract
 -- @type    query
 -- @param   prev_index (integer) the index of the previous returned token. use `0` in the first call
+-- @param   max_items (integer) the maximum number of items to return
 -- @return  (index, tokenId) the index of the next token and its token id, or `nil,nil` if no more tokens
-function nextToken(prev_index)
+function nextToken(prev_index, max_items)
 
 -- Retrieves the token from the given user at the given position
 -- @type    query
 -- @param   user      (address) ..
 -- @param   position  (integer) the position of the token in the incremental sequence
+-- @param   max_items (integer) the maximum number of items to return
 -- @return  tokenId   (str128) the token id, or `nil` if no more tokens on this account
-function tokenFromUser(user, position)
+function tokenFromUser(user, position, max_items)
 ```
 
 

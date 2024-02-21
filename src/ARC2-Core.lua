@@ -313,43 +313,78 @@ end
 -- Retrieves the next token in the contract
 -- @type    query
 -- @param   prev_index (integer) the index of the previous returned token. use `0` in the first call
+-- @param   max_items (integer) the maximum number of items to return
 -- @return  (index, tokenId) the index of the next token and its token id, or `nil,nil` if no more tokens
-function nextToken(prev_index)
+function nextToken(prev_index, max_items)
   _typecheck(prev_index, 'uint')
+  if max_items == nil then
+    max_items = 1
+  else
+    _typecheck(max_items, 'uint')
+  end
 
   local index = prev_index
   local last_index = _last_index:get()
   local tokenId
+  local tokens = {}
+  local count = 0
 
-  while tokenId == nil and index < last_index do
+  while count < max_items and index < last_index do
     index = index + 1
     tokenId = _ids[index]
+    if tokenId ~= nil then
+      count = count + 1
+      tokens[count] = tokenId
+    end
   end
 
   if tokenId == nil then
     index = nil
   end
 
-  return index, tokenId
+  if max_items == 1 then
+    return index, tokenId
+  else
+    return index, tokens
+  end
 end
 
 -- Retrieves the token from the given user at the given position
 -- @type    query
 -- @param   user      (address) ..
 -- @param   position  (integer) the position of the token in the incremental sequence
+-- @param   max_items (integer) the maximum number of items to return
 -- @return  tokenId   (str128) the token id, or `nil` if no more tokens on this account
-function tokenFromUser(user, position)
+function tokenFromUser(user, position, max_items)
   _typecheck(user, 'address')
   _typecheck(position, 'uint')
+  if max_items == nil then
+    max_items = 1
+  else
+    _typecheck(max_items, 'uint')
+  end
 
-  local count = _owner_token_count[user] or 0
-  if position == 0 or position > count then
+  local total = _owner_token_count[user] or 0
+  if position == 0 or position > total then
     return nil
   end
 
-  local index = _owner_tokens[user][tostring(position)]
-  local tokenId = _ids[index]
-  return tokenId
+  local tokens = {}
+  local count = 0
+
+  while count < max_items and position <= total do
+    local index = _owner_tokens[user][tostring(position)]
+    local tokenId = _ids[index]
+    count = count + 1
+    tokens[count] = tokenId
+    position = position + 1
+  end
+
+  if max_items == 1 then
+    return tokens[1]
+  else
+    return tokens
+  end
 end
 
 
