@@ -6,7 +6,7 @@ inject ac3 1000000000
 # ac2 = AmgeSw3M3V3orBMjf1j98kGne4WycnmQWVTJe6MYNrQ2wuVz3Li2
 # ac3 = Amh472hZcaLquvL4ZWoyVEYAoH3ZLAtMR2sw8xy9FnNBwhwF6Ktd
 
-deploy ac1 0 factory ../factory/output.lua
+deploy ac1 0 factory ../factory/ARC2-Factory.lua
 
 call ac1 0 factory new_arc2_nft `["","",null,{"metadata": true, "mintable": true, "searchable":true}]`
 query Amg5UA67bohibBVVJJSzaph2gHzWnKiThmdbpFjzpZP99aFuHyrH arc2_extensions `[]` `["metadata","mintable","searchable"]`
