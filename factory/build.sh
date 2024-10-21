@@ -19,4 +19,4 @@ process_file "Searchable" "%searchable%"
 process_file "NonTransferable" "%non_transferable%"
 process_file "Recallable" "%recallable%"
 
-echo "$base" > output.lua
+echo "$base" > ARC2-Factory.lua
